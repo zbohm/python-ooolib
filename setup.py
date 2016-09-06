@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from distutils.core import setup
 import distutils.core
@@ -9,9 +10,9 @@ setup(name="ooolib-python",
       description="Package for creating OpenDocument Format(ODF) spreadsheets.",
       author="Joseph Colton",
       author_email="joseph@colton.byuh.edu",
-      maintainer="Joseph Colton",
-      maintainer_email="joseph@colton.byuh.edu",
+      maintainer=u"Zdeněk Böhm",
+      maintainer_email="zdenek.bohm@nic.cz",
       license = 'GNU LGPL',
-      url = "http://sourceforge.net/projects/ooolib/",
+      url = "https://github.com/zbohm/python-ooolib",
       packages=['ooolib']
       )
