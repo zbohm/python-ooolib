@@ -1217,6 +1217,7 @@ class Calc(object):
             data = self._file_load(filename)
             if self.debug: print "  Inserting '%s' as '%s'" % (filename, newname)
             self._zip_insert_binary(self.savefile, newname, data)
+        self.savefile.close()
 
     def _file_load(self, filename):
         "Load a file"
