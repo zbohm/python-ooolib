@@ -363,8 +363,8 @@ class Meta:
 #              ['element', 'meta:cell-count', '15']]]] # Not sure how to keep track
 
         # Generate content.xml XML data
-        xml = XML()
-        self.lines = xml.convert(self.data)
+        xmldoc = XML()
+        self.lines = xmldoc.convert(self.data)
         self.filedata = '\n'.join(self.lines)
         # Return generated data
         return self.filedata
@@ -407,16 +407,16 @@ class CalcStyles:
         style_code = ""
         if style == 'table':
             style_code = 'ta%d' % self.style_table
-            self.style_table+=1
+            self.style_table += 1
         if style == 'column':
             style_code = 'co%d' % self.style_column
-            self.style_column+=1
+            self.style_column += 1
         if style == 'row':
             style_code = 'ro%d' % self.style_row
-            self.style_row+=1
+            self.style_row += 1
         if style == 'cell':
             style_code = 'ce%d' % self.style_cell
-            self.style_cell+=1
+            self.style_cell += 1
         return style_code
 
     def set_property(self, style, name, value):
@@ -773,7 +773,7 @@ class CalcSheet:
         # self.sheet_values[cell] = (datatype, datavalue)
         # HPS: Cell content is now a list of tuples instead of a tuple
         # While storing here, store the cell contents first and the annotation next. While generating the XML reverse this
-        contents = self.sheet_values.get(cell, {'annotation':None,'link':None, 'value':None})
+        contents = self.sheet_values.get(cell, {'annotation':None, 'link':None, 'value':None})
         if datatype == 'annotation':
             contents['annotation'] = (datatype, datavalue)
         elif datatype == 'link':
@@ -810,7 +810,7 @@ class CalcSheet:
 #                ['element', 'table:default-cell-style-name', 'Default']],
 
             # Need to add column information
-            for col in range(1, self.max_col+1):
+            for col in range(1, self.max_col + 1):
                 location = ('col', col)
                 style_code = 'co1'
                 if location in self.sheet_config:
@@ -1104,8 +1104,8 @@ class Calc:
             # Set the cell value
             if datatype:
                 # I should do this once per cell repeat above 0
-                for i in range(0, self.parser_cell_repeats+1):
-                    self.set_cell_value(self.parser_sheet_column+i, self.parser_sheet_row, datatype, value)
+                for i in range(0, self.parser_cell_repeats + 1):
+                    self.set_cell_value(self.parser_sheet_column + i, self.parser_sheet_row, datatype, value)
 
         # There are lots of interesting cases with table:table-cell data.  One problem is
         # reading the number of embedded spaces correctly.  This code should help us get
@@ -1121,7 +1121,7 @@ class Calc:
             # I am not sure what to do if we do not have a string pending
             if (self.parser_cell_string_pending == True):
                 # Append the currect number of spaces to the end
-                self.parser_cell_string_line = "%s%s" % (self.parser_cell_string_line, ' '*count_num)
+                self.parser_cell_string_line = "%s%s" % (self.parser_cell_string_line, ' ' * count_num)
 
         if (self.parser_element == 'text:tab-stop'):
             if (self.parser_cell_string_pending == True):
@@ -1167,8 +1167,8 @@ class Calc:
                 self.parser_cell_string_line = "%s%s" % (self.parser_cell_string_line, data)
 
                 # I should do this once per cell repeat above 0
-                for i in range(0, self.parser_cell_repeats+1):
-                    self.set_cell_value(self.parser_sheet_column+i, self.parser_sheet_row,
+                for i in range(0, self.parser_cell_repeats + 1):
+                    self.set_cell_value(self.parser_sheet_column + i, self.parser_sheet_row,
                             'string', self.parser_cell_string_line)
 
 
@@ -1225,16 +1225,16 @@ class Calc:
         "Load a file"
         return open(filename, "rb").read()
 
-    def _zip_insert_binary(self, file, filename, data):
+    def _zip_insert_binary(self, fileobj, filename, data):
         "Insert a binary file into the zip archive"
         now = time.localtime(time.time())[:6]
         info = zipfile.ZipInfo(filename)
         info.date_time = now
         info.compress_type = zipfile.ZIP_DEFLATED
-        file.writestr(info, data)
+        fileobj.writestr(info, data)
 
 
-    def _zip_insert(self, file, filename, data):
+    def _zip_insert(self, fileobj, filename, data):
         "Insert a file into the zip archive"
 
         # zip seems to struggle with non-ascii characters
@@ -1244,14 +1244,14 @@ class Calc:
         info = zipfile.ZipInfo(filename)
         info.date_time = now
         info.compress_type = zipfile.ZIP_DEFLATED
-        file.writestr(info, data)
+        fileobj.writestr(info, data)
 
-    def _zip_read(self, file, filename):
+    def _zip_read(self, fileobj, filename):
         "Get the data from a file in the zip archive by filename"
-        file = zipfile.ZipFile(file, "r")
-        data = file.read(filename)
+        zipdoc = zipfile.ZipFile(fileobj, "r")
+        data = zipdoc.read(filename)
         # Need to close the file
-        file.close()
+        zipdoc.close()
         return data
 
     def _ods_content(self):
@@ -1312,8 +1312,8 @@ class Calc:
             self.sheetdata]]                                      # Sheets are generated from the CalcSheet class
 
         # Generate content.xml XML data
-        xml = XML()
-        self.lines = xml.convert(self.data)
+        xmldoc = XML()
+        self.lines = xmldoc.convert(self.data)
         self.filedata = '\n'.join(self.lines)
         # Return generated data
         return self.filedata
@@ -1356,8 +1356,8 @@ class Calc:
             self.data.append(addfile)
 
         # Generate content.xml XML data
-        xml = XML()
-        self.lines = xml.convert(self.data)
+        xmldoc = XML()
+        self.lines = xmldoc.convert(self.data)
         self.filedata = '\n'.join(self.lines)
         # Return generated data
         return self.filedata
@@ -1637,8 +1637,8 @@ class Calc:
                 ['data', 'false']]]]]
 
         # Generate content.xml XML data
-        xml = XML()
-        self.lines = xml.convert(self.data)
+        xmldoc = XML()
+        self.lines = xmldoc.convert(self.data)
         self.filedata = '\n'.join(self.lines)
         # Return generated data
         return self.filedata
@@ -1839,8 +1839,8 @@ class Calc:
 
 
         # Generate content.xml XML data
-        xml = XML()
-        self.lines = xml.convert(self.data)
+        xmldoc = XML()
+        self.lines = xmldoc.convert(self.data)
         self.filedata = '\n'.join(self.lines)
         # Return generated data
         return self.filedata
@@ -1880,12 +1880,12 @@ class Writer:
         # We need to close the file now that we are done creating it.
         self.savefile.close()
 
-    def _zip_insert(self, file, filename, data):
+    def _zip_insert(self, fileobj, filename, data):
         now = time.localtime(time.time())[:6]
         info = zipfile.ZipInfo(filename)
         info.date_time = now
         info.compress_type = zipfile.ZIP_DEFLATED
-        file.writestr(info, data)
+        fileobj.writestr(info, data)
 
     def _odt_manifest(self):
         "Generate odt manifest.xml data"
@@ -1909,8 +1909,8 @@ class Writer:
             ['element', 'manifest:full-path', 'settings.xml']]]
 
         # Generate content.xml XML data
-        xml = XML()
-        self.lines = xml.convert(self.data)
+        xmldoc = XML()
+        self.lines = xmldoc.convert(self.data)
         self.lines.insert(1, '<!DOCTYPE manifest:manifest PUBLIC "-//OpenOffice.org//DTD Manifest 1.0//EN" "Manifest.dtd">')
         self.filedata = '\n'.join(self.lines)
         # Return generated data
@@ -1983,10 +1983,8 @@ class Writer:
                 ['element', 'text:style-name', 'Standard']]]]]
 
         # Generate content.xml XML data
-        xml = XML()
-        self.lines = xml.convert(self.data)
+        xmldoc = XML()
+        self.lines = xmldoc.convert(self.data)
         self.filedata = '\n'.join(self.lines)
         # Return generated data
         return self.filedata
-
-
