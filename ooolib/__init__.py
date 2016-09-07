@@ -56,7 +56,7 @@ class XML(object):
     "XML Class - Used to convert nested lists into XML"
 
     def _xmldata(self, data):
-        datatype = data.pop(0)
+        data.pop(0)  # data type
         datavalue = data.pop(0)
         outstring = '%s' % datavalue
         return outstring
@@ -64,7 +64,7 @@ class XML(object):
     def _xmltag(self, data):
         outstring = ''
         # First two
-        datatype = data.pop(0)
+        data.pop(0)  # datatype
         dataname = data.pop(0)
         outstring = '<%s' % dataname
         # Element Section
@@ -72,28 +72,28 @@ class XML(object):
         while(data):
             # elements
             newdata = data.pop(0)
-            if (newdata[0] == 'element' and element):
+            if newdata[0] == 'element' and element:
                 newstring = self._xmlelement(newdata)
                 outstring = '%s %s' % (outstring, newstring)
                 continue
-            if (newdata[0] != 'element' and element):
+            if newdata[0] != 'element' and element:
                 element = 0
                 outstring = '%s>' % outstring
-                if (newdata[0] == 'tag' or newdata[0] == 'tagline'):
+                if newdata[0] == 'tag' or newdata[0] == 'tagline':
                     outstring = '%s\n' % outstring
-            if (newdata[0] == 'tag'):
+            if newdata[0] == 'tag':
                 newstring = self._xmltag(newdata)
                 outstring = '%s%s' % (outstring, newstring)
                 continue
-            if (newdata[0] == 'tagline'):
+            if newdata[0] == 'tagline':
                 newstring = self._xmltagline(newdata)
                 outstring = '%s%s' % (outstring, newstring)
                 continue
-            if (newdata[0] == 'data'):
+            if newdata[0] == 'data':
                 newstring = self._xmldata(newdata)
                 outstring = '%s%s' % (outstring, newstring)
                 continue
-        if (element):
+        if element:
             element = 0
             outstring = '%s>\n' % outstring
         outstring = '%s</%s>\n' % (outstring, dataname)
@@ -102,14 +102,15 @@ class XML(object):
     def _xmltagline(self, data):
         outstring = ''
         # First two
-        datatype = data.pop(0)
+        data.pop(0)  # datatype
         dataname = data.pop(0)
         outstring = '<%s' % dataname
         # Element Section
         while(data):
             # elements
             newdata = data.pop(0)
-            if (newdata[0] != 'element'): break
+            if newdata[0] != 'element':
+                break
             newstring = self._xmlelement(newdata)
             outstring = '%s %s' % (outstring, newstring)
         outstring = '%s/>\n' % outstring
@@ -117,7 +118,7 @@ class XML(object):
         return outstring
 
     def _xmlelement(self, data):
-        datatype = data.pop(0)
+        data.pop(0)  # datatype
         dataname = data.pop(0)
         datavalue = data.pop(0)
         outstring = '%s="%s"' % (dataname, datavalue)
@@ -162,8 +163,9 @@ class XML(object):
         """
         outlines = []
         outlines.append('<?xml version="1.0" encoding="UTF-8"?>')
-        if (type(data) == type([]) and len(data) > 0):
-            if data[0] == 'tag': outlines.append(self._xmltag(data))
+        if isinstance(data, (list, tuple)) and len(data) > 0:
+            if data[0] == 'tag':
+                outlines.append(self._xmltag(data))
         return outlines
 
 
@@ -250,7 +252,7 @@ class Meta(object):
         self.parser_element = self.parser_element_list[-1]
 
         # Need the meta name from the user-defined tags
-        if (self.parser_element == "meta:user-defined"):
+        if self.parser_element == "meta:user-defined":
             self.parser_count += 1
             # Set user-defined name
             self.set_meta("user%dname" % self.parser_count, attrs['meta:name'])
@@ -266,7 +268,7 @@ class Meta(object):
         self.parser_element_list.pop()
 
         # Readjust parser_element_list and parser_element
-        if (self.parser_element_list):
+        if self.parser_element_list:
             self.parser_element = self.parser_element_list[-1]
         else:
             self.parser_element = ""
@@ -275,21 +277,21 @@ class Meta(object):
         if self.debug: print "  Character data: ", repr(data)
 
         # Collect Meta data fields
-        if (self.parser_element == "dc:title"):
+        if self.parser_element == "dc:title":
             self.set_meta("title", data)
-        if (self.parser_element == "dc:description"):
+        if self.parser_element == "dc:description":
             self.set_meta("description", data)
-        if (self.parser_element == "dc:subject"):
+        if self.parser_element == "dc:subject":
             self.set_meta("subject", data)
-        if (self.parser_element == "meta:initial-creator"):
+        if self.parser_element == "meta:initial-creator":
             self.set_meta("creator", data)
 
         # Try to maintain the same creation date
-        if (self.parser_element == "meta:creation-date"):
+        if self.parser_element == "meta:creation-date":
             self.meta_creation_date = data
 
         # The user defined fields need to be kept track of, parser_count does that
-        if (self.parser_element == "meta:user-defined"):
+        if self.parser_element == "meta:user-defined":
             self.set_meta("user%dvalue" % self.parser_count, data)
 
     def meta_parse(self, data):
@@ -418,33 +420,37 @@ class CalcStyles(object):
 
     def set_property(self, style, name, value):
         "Sets a property which will later be turned into a code"
-        if style == 'table':
-            pass
         if style == 'column':
             if name == 'style:column-width': self.property_column_width = value
-        if style == 'row':
+        elif style == 'row':
             if name == 'style:row-height': self.property_row_height = value
-        if style == 'cell':
-            if name == 'bold' and type(value) == type(True): self.property_cell_bold = value
-            if name == 'italic' and type(value) == type(True): self.property_cell_italic = value
-            if name == 'underline' and type(value) == type(True): self.property_cell_underline = value
-            if name == 'fontsize': self.property_cell_fontsize = value
-            if name == 'hyphenate': self.property_cell_hyphenate = value
-            if name == 'color':
+        elif style == 'cell':
+            if isinstance(value, bool):
+                if name == 'bold':
+                    self.property_cell_bold = value
+                elif name == 'italic':
+                    self.property_cell_italic = value
+                elif name == 'underline':
+                    self.property_cell_underline = value
+            if name == 'fontsize':
+                self.property_cell_fontsize = value
+            elif name == 'hyphenate':
+                self.property_cell_hyphenate = value
+            elif name == 'color':
                 self.property_cell_fg_color = 'default'
                 redata = re.search("^(#[\da-fA-F]{6})$", value)
                 if redata: self.property_cell_fg_color = value.lower()
-            if name == 'background':
+            elif name == 'background':
                 self.property_cell_bg_color = 'default'
                 redata = re.search("^(#[\da-fA-F]{6})$", value)
                 if redata: self.property_cell_bg_color = value.lower()
-            if name == 'backgroundimage':
+            elif name == 'backgroundimage':
                 self.property_cell_bg_image = value
-            if name == 'valign':
+            elif name == 'valign':
                 self.property_cell_valign = value
-            if name == 'halign':
+            elif name == 'halign':
                 self.property_cell_halign = value
-            if name == 'wrap-option':
+            elif name == 'wrap-option':
                 self.property_cell_wrap_option = value
 
             self.init_cell_cardinal('border', name, value)
@@ -732,21 +738,21 @@ class CalcSheet(object):
         datavalue should be a string
         """
         # Catch invalid data
-        if type(cell) != type(()) or len(cell) != 2:
+        if not isinstance(cell, tuple) or len(cell) != 2:
             print "Invalid Cell"
             return
         (col, row) = cell
-        if type(col) != type(1):
+        if not isinstance(col, int):
             print "Invalid Cell"
             return
-        if type(row) != type(1):
+        if not isinstance(row, int):
             print "Invalid Cell"
             return
         # Fix String Data
         if datatype in ['string', 'annotation']:
             datavalue = clean_string(datavalue)
         # Fix Link Data. Link's value is a tuple containing (url, description)
-        if (datatype == 'link'):
+        if datatype == 'link':
             url = clean_string(datavalue[0])
             desc = clean_string(datavalue[1])
             datavalue = (url, desc)
@@ -757,7 +763,7 @@ class CalcSheet(object):
         if col > self.max_col: self.max_col = col
         if row > self.max_row: self.max_row = row
         datatype = str(datatype)
-        if (datatype not in ['string', 'float', 'formula', 'annotation', 'link']):
+        if datatype not in ('string', 'float', 'formula', 'annotation', 'link'):
             # Set all unknown cell types to string
             datatype = 'string'
             datavalue = str(datavalue)
@@ -766,7 +772,7 @@ class CalcSheet(object):
         # self.sheet_values[cell] = (datatype, datavalue)
         # HPS: Cell content is now a list of tuples instead of a tuple
         # While storing here, store the cell contents first and the annotation next. While generating the XML reverse this
-        contents = self.sheet_values.get(cell, {'annotation':None, 'link':None, 'value':None})
+        contents = self.sheet_values.get(cell, {'annotation': None, 'link': None, 'value': None})
         if datatype == 'annotation':
             contents['annotation'] = (datatype, datavalue)
         elif datatype == 'link':
@@ -778,7 +784,7 @@ class CalcSheet(object):
 
     def get_lists(self):
         "Returns nested lists for XML processing"
-        if (self.max_col == 0 and self.max_row == 0):
+        if self.max_col == 0 and self.max_row == 0:
             sheet_lists = ['tag', 'table:table',
               ['element', 'table:name', self.sheet_name], # Set the Sheet Name
               ['element', 'table:style-name', 'ta1'],
@@ -921,9 +927,11 @@ class Calc(object):
         "Determine the filetype from the filename"
         parts = filename.lower().split('.')
         ext = parts[-1]
-        if (ext == 'png'): return (ext, "image/png")
-        if (ext == 'gif'): return (ext, "image/gif")
-        return (ext, "image/unknown")
+        if ext == 'png':
+            return ext, "image/png"
+        if ext == 'gif':
+            return ext, "image/gif"
+        return ext, "image/unknown"
 
     def add_file(self, filename):
         """Prepare a file for loading into ooolib
@@ -980,7 +988,7 @@ class Calc(object):
         Actual application of properties is handled by setting a value."""
         # background images need to be handled a little differently
         # because they need to also be inserted into the final document
-        if (name == 'backgroundimage'):
+        if name == 'backgroundimage':
             # Add file and modify value
             value = self.add_file(value)
         self.styles.set_property('cell', name, value)
@@ -991,7 +999,7 @@ class Calc(object):
 
     def set_sheet_index(self, index):
         "Set the sheet index"
-        if type(index) == type(1):
+        if isinstance(index, int):
             if index >= 0 and index < len(self.sheets):
                 self.sheet_index = index
         return self.sheet_index
@@ -1016,7 +1024,8 @@ class Calc(object):
         "Get a cell value tuple (type, value) for a given cell"
         sheetvalue = self.sheets[self.sheet_index].get_sheet_value(col, row)
         # We stop here if there is no value for sheetvalue
-        if sheetvalue == None: return sheetvalue
+        if sheetvalue is None:
+            return sheetvalue
         # Now check to see if we have a value tuple
         if 'value' in sheetvalue:
             return sheetvalue['value']
@@ -1047,13 +1056,13 @@ class Calc(object):
         self.parser_element = self.parser_element_list[-1]
 
         # Keep track of the current sheet number
-        if (self.parser_element == 'table:table'):
+        if self.parser_element == 'table:table':
             # Move to starting cell
             self.parser_sheet_row = 0
             self.parser_sheet_column = 0
             # Increment the sheet number count
             self.parser_sheet_num += 1
-            if (self.parser_sheet_num - 1 != self.sheet_index):
+            if self.parser_sheet_num - 1 != self.sheet_index:
                 # We are not on the first sheet and need to create a new sheet.
                 # We will automatically move to the new sheet
                 sheetname = "Sheet%d" % self.parser_sheet_num
@@ -1066,12 +1075,12 @@ class Calc(object):
                 self.sheets[self.sheet_index].set_name(sheetname)
 
         # Update the row numbers
-        if (self.parser_element == 'table:table-row'):
+        if self.parser_element == 'table:table-row':
             self.parser_sheet_row += 1
             self.parser_sheet_column = 0
 
         # Okay, now keep track of the sheet cell data
-        if (self.parser_element == 'table:table-cell'):
+        if self.parser_element == 'table:table-cell':
             # By default it will repeat zero times
             self.parser_cell_repeats = 0
             # We must be in a new column
@@ -1101,24 +1110,24 @@ class Calc(object):
         # reading the number of embedded spaces correctly.  This code should help us get
         # the number of spaces out.
 
-        if (self.parser_element == 'text:s'):
+        if self.parser_element == 'text:s':
             # This means we have a number of spaces
             count_num = 0
             if 'text:c' in attrs:
                 count_alpha = attrs['text:c']
-                if (count_alpha.isdigit()):
+                if count_alpha.isdigit():
                     count_num = int(count_alpha)
             # I am not sure what to do if we do not have a string pending
-            if (self.parser_cell_string_pending == True):
+            if self.parser_cell_string_pending:
                 # Append the currect number of spaces to the end
                 self.parser_cell_string_line = "%s%s" % (self.parser_cell_string_line, ' ' * count_num)
 
-        if (self.parser_element == 'text:tab-stop'):
-            if (self.parser_cell_string_pending == True):
+        if self.parser_element == 'text:tab-stop':
+            if self.parser_cell_string_pending:
                 self.parser_cell_string_line = "%s\t" % (self.parser_cell_string_line)
 
-        if (self.parser_element == 'text:line-break'):
-            if (self.parser_cell_string_pending == True):
+        if self.parser_element == 'text:line-break':
+            if self.parser_cell_string_pending:
                 self.parser_cell_string_line = "%s\n" % (self.parser_cell_string_line)
 
         # Debugging statements
@@ -1132,16 +1141,16 @@ class Calc(object):
         self.parser_element_list.pop()
 
         # If the element was text:p and we are in string mode
-        if (self.parser_element == 'text:p'):
-            if (self.parser_cell_string_pending):
+        if self.parser_element == 'text:p':
+            if self.parser_cell_string_pending:
                 self.parser_cell_string_pending = False
 
         # Take care of repeated cells
-        if (self.parser_element == 'table:table-cell'):
+        if self.parser_element == 'table:table-cell':
             self.parser_sheet_column += self.parser_cell_repeats
 
         # Readjust parser_element_list and parser_element
-        if (self.parser_element_list):
+        if self.parser_element_list:
             self.parser_element = self.parser_element_list[-1]
         else:
             self.parser_element = ""
@@ -1149,8 +1158,8 @@ class Calc(object):
     def parse_content_char_data(self, data):
         if self.debug: print "  Character data: ", repr(data)
 
-        if (self.parser_element == 'text:p' or self.parser_element == 'text:span'):
-            if (self.parser_cell_string_pending):
+        if self.parser_element == 'text:p' or self.parser_element == 'text:span':
+            if self.parser_cell_string_pending:
                 # Set the string and leave string pending mode
                 # This does feel a little kludgy, but it does the job
                 self.parser_cell_string_line = "%s%s" % (self.parser_cell_string_line, data)
@@ -1910,7 +1919,7 @@ class Writer(object):
           ['element', 'xmlns:style', 'urn:oasis:names:tc:opendocument:xmlns:style:1.0'],
           ['element', 'xmlns:text', 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'],
           ['element', 'xmlns:table', 'urn:oasis:names:tc:opendocument:xmlns:table:1.0'],
-                  ['element', 'xmlns:draw', 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0'],
+          ['element', 'xmlns:draw', 'urn:oasis:names:tc:opendocument:xmlns:drawing:1.0'],
           ['element', 'xmlns:fo', 'urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0'],
           ['element', 'xmlns:xlink', 'http://www.w3.org/1999/xlink'],
           ['element', 'xmlns:dc', 'http://purl.org/dc/elements/1.1/'],
