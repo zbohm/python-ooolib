@@ -23,19 +23,19 @@
 import cgi
 import zipfile           # Needed for reading/writing documents
 import time
-import sys
-import glob
-import os
 import re
 import xml.parsers.expat # Needed for parsing documents
+
 
 def version_number():
     "Get the ooolib-python version number"
     return "0.0.17"
 
+
 def version():
     "Get the ooolib-python version"
     return "ooolib-python-%s" % version_number()
+
 
 def clean_string(data):
     "Returns an XML friendly copy of the data string"
@@ -51,11 +51,9 @@ def clean_string(data):
     data = data.replace('\n', '<text:line-break/>')
     return data
 
-class XML:
+
+class XML(object):
     "XML Class - Used to convert nested lists into XML"
-    def __init__(self):
-        "Initialize ooolib XML instance"
-        pass
 
     def _xmldata(self, data):
         datatype = data.pop(0)
@@ -168,7 +166,8 @@ class XML:
             if data[0] == 'tag': outlines.append(self._xmltag(data))
         return outlines
 
-class Meta:
+
+class Meta(object):
     "Meta Data Class"
 
     def __init__(self, doctype, debug=False):
@@ -259,7 +258,6 @@ class Meta:
         # Debugging statements
         if self.debug: print "  List: ", self.parser_element_list
         if self.debug: print "  Attributes: ", attrs
-
 
     def parse_end_element(self, name):
         if self.debug: print '* End element:', name
@@ -370,8 +368,7 @@ class Meta:
         return self.filedata
 
 
-
-class CalcStyles:
+class CalcStyles(object):
     "Calc Style Management - Used to keep track of created styles."
 
     def __init__(self):
@@ -633,7 +630,6 @@ class CalcStyles:
                 # Conditionally add the tagline
                 if tagline_valid: style_list.append(tagline)
 
-
                 # Text Properties
                 tagline = ['tagline', 'style:text-properties']
                 for name, value in style_data:
@@ -655,7 +651,6 @@ class CalcStyles:
 
                 automatic_styles.append(style_list)
 
-
         # Attach ta1 style
         automatic_styles.append(['tag', 'style:style',
           ['element', 'style:name', 'ta1'],
@@ -665,12 +660,10 @@ class CalcStyles:
             ['element', 'table:display', 'true'],
             ['element', 'style:writing-mode', 'lr-tb']]])
 
-
         return automatic_styles
 
 
-
-class CalcSheet:
+class CalcSheet(object):
     "Calc Sheet Class - Used to keep track of the data for an individual sheet."
 
     def __init__(self, sheetname):
@@ -783,7 +776,6 @@ class CalcSheet:
 
         self.sheet_values[cell] = contents
 
-
     def get_lists(self):
         "Returns nested lists for XML processing"
         if (self.max_col == 0 and self.max_row == 0):
@@ -818,7 +810,6 @@ class CalcSheet:
                 sheet_lists.append(['tagline', 'table:table-column',
                   ['element', 'table:style-name', style_code],
                   ['element', 'table:default-cell-style-name', 'Default']])
-
 
             # Need to create each row
             for row in range(1, self.max_row + 1):
@@ -875,17 +866,16 @@ class CalcSheet:
                         else:
                             if datavalue:
                                 collist.append(['tag', 'text:p', ['data', datavalue]])
-
-
-
                     else:
                         collist = ['tagline', 'table:table-cell']
                     rowlist.append(collist)
                 sheet_lists.append(rowlist)
         return sheet_lists
 
-class Calc:
+
+class Calc(object):
     "Calc Class - Used to create OpenDocument Format Calc Spreadsheets."
+
     def __init__(self, sheetname=None, opendoc=None, debug=False):
         "Initialize ooolib Calc instance"
         # Default to no debugging
@@ -1135,7 +1125,6 @@ class Calc:
         if self.debug: print "  List: ", self.parser_element_list
         if self.debug: print "  Attributes: ", attrs
 
-
     def parse_content_end_element(self, name):
         if self.debug: print '* End element:', name
         if name != self.parser_element:
@@ -1170,7 +1159,6 @@ class Calc:
                 for i in range(0, self.parser_cell_repeats + 1):
                     self.set_cell_value(self.parser_sheet_column + i, self.parser_sheet_row,
                             'string', self.parser_cell_string_line)
-
 
     def content_parse(self, data):
         "Parse Content Data from a content.xml file"
@@ -1232,7 +1220,6 @@ class Calc:
         info.date_time = now
         info.compress_type = zipfile.ZIP_DEFLATED
         fileobj.writestr(info, data)
-
 
     def _zip_insert(self, fileobj, filename, data):
         "Insert a file into the zip archive"
@@ -1361,7 +1348,6 @@ class Calc:
         self.filedata = '\n'.join(self.lines)
         # Return generated data
         return self.filedata
-
 
     def _ods_settings(self):
         "Generate ods settings.xml data"
@@ -1643,7 +1629,6 @@ class Calc:
         # Return generated data
         return self.filedata
 
-
     def _ods_styles(self):
         "Generate ods styles.xml data"
         self.data = ['tag', 'office:document-styles',
@@ -1837,7 +1822,6 @@ class Calc:
               ['tagline', 'style:footer-left',
                 ['element', 'style:display', 'false']]]]]
 
-
         # Generate content.xml XML data
         xmldoc = XML()
         self.lines = xmldoc.convert(self.data)
@@ -1845,8 +1829,10 @@ class Calc:
         # Return generated data
         return self.filedata
 
-class Writer:
+
+class Writer(object):
     "Writer Class - Used to create OpenDocument Format Writer Documents."
+
     def __init__(self):
         "Initialize ooolib Writer instance"
         # Default to no debugging
