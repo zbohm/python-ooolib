@@ -20,6 +20,7 @@
 # You can contact me by email at josephcolton@gmail.com
 
 # Import Standard Modules
+import cgi
 import zipfile           # Needed for reading/writing documents
 import time
 import sys
@@ -242,9 +243,7 @@ class Meta:
 
     def meta_time(self):
         "Return time string in meta data format"
-        t = time.localtime()
-        stamp = "%04d-%02d-%02dT%02d:%02d:%02d" % (t[0], t[1], t[2], t[3], t[4], t[5])
-        return stamp
+        return "%04d-%02d-%02dT%02d:%02d:%02d" % time.localtime()[:6]
 
     def parse_start_element(self, name, attrs):
         if self.debug: print '* Start element:', name
@@ -512,8 +511,7 @@ class CalcStyles:
                 tagline = ['tagline', 'style:table-column-properties',
                   ['element', 'fo:break-before', 'auto']]      # unsure what break before means
 
-                for set in style_data:
-                    name, value = set
+                for name, value in style_data:
                     if name == 'style:column-width':
                         tagline.append(['element', 'style:column-width', value])
                 style_list.append(tagline)
@@ -525,8 +523,7 @@ class CalcStyles:
                   ['element', 'style:family', 'table-row']]
                 tagline = ['tagline', 'style:table-row-properties']
 
-                for set in style_data:
-                    name, value = set
+                for name, value in style_data:
                     if name == 'style:row-height':
                         tagline.append(['element', 'style:row-height', value])
                 tagline.append(['element', 'fo:break-before', 'auto'])
@@ -543,11 +540,10 @@ class CalcStyles:
                 # Cell Properties
                 tagline = ['tag', 'style:table-cell-properties']
                 tagline_additional = []
-                for set in style_data:
-                    name, value = set
+                for name, value in style_data:
                     if name == 'background':
                         tagline.append(['element', 'fo:background-color', value])
-                    if name == 'backgroundimage':
+                    elif name == 'backgroundimage':
                         tagline.append(['element', 'fo:background-color', 'transparent'])
                         # Additional tags added later
                         bgimagetag = ['tagline', 'style:background-image']
@@ -555,10 +551,10 @@ class CalcStyles:
                         bgimagetag.append(['element', 'xlink:type', 'simple'])
                         bgimagetag.append(['element', 'xlink:actuate', 'onLoad'])
                         tagline_additional.append(bgimagetag)
-                    if name == 'valign':
+                    elif name == 'valign':
                         if value in ['top', 'bottom', 'middle']:
                             tagline.append(['element', 'style:vertical-align', value])
-                    if name == 'halign':
+                    elif name == 'halign':
                         tagline.append(['element', 'style:text-align-source', 'fix'])
                         if value in ['filled']:
                             tagline.append(['element', 'style:repeat-content', 'true'])
@@ -575,8 +571,7 @@ class CalcStyles:
                 # Paragraph Properties
                 tagline = ['tagline', 'style:paragraph-properties']
                 tagline_valid = False
-                for set in style_data:
-                    name, value = set
+                for name, value in style_data:
                     if name == 'halign':
                         tagline_valid = True
                         if value in ['center']:
@@ -593,19 +588,18 @@ class CalcStyles:
 
                 # Text Properties
                 tagline = ['tagline', 'style:text-properties']
-                for set in style_data:
-                    name, value = set
+                for name, value in style_data:
                     if name == 'bold':
                         tagline.append(['element', 'fo:font-weight', 'bold'])
-                    if name == 'italic':
+                    elif name == 'italic':
                         tagline.append(['element', 'fo:font-style', 'italic'])
-                    if name == 'underline':
+                    elif name == 'underline':
                         tagline.append(['element', 'style:text-underline-style', 'solid'])
                         tagline.append(['element', 'style:text-underline-width', 'auto'])
                         tagline.append(['element', 'style:text-underline-color', 'font-color'])
-                    if name == 'color':
+                    elif name == 'color':
                         tagline.append(['element', 'fo:color', value])
-                    if name == 'fontsize':
+                    elif name == 'fontsize':
                         tagline.append(['element', 'fo:font-size', '%spt' % value])
                 style_list.append(tagline)
 
@@ -652,21 +646,10 @@ class CalcSheet:
         data = clean_string(data)
         redata = re.search('^=([A-Z]+)(\(.*)$', data)
         if redata:
-            # funct is the function name.  The rest if the string will be the functArgs
+            # funct is the function name.  The rest if the string will be the funct_args
             funct = redata.group(1)
-            functArgs = redata.group(2)
-            # Search for cell lebels and replace them
-            reList = re.findall('([A-Z]+\d+)', functArgs)
-            # sort and keep track so we do not do a cell more than once
-            reList.sort()
-            lastVar = ''
-            while reList:
-                # Replace each cell label
-                curVar = reList.pop()
-                if curVar == lastVar: continue
-                lastVar = curVar
-                functArgs = functArgs.replace(curVar, '[.%s]' % curVar)
-            data = 'oooc:=%s%s' % (funct, functArgs)
+            funct_args = cgi.escape(re.sub('([A-Z]+\d+)', '[.\\1]', redata.group(2)), 'quot')
+            data = 'oooc:=%s%s' % (funct, funct_args)
         return data
 
     def get_name(self):
@@ -1190,10 +1173,7 @@ class Calc:
 
     def _file_load(self, filename):
         "Load a file"
-        file = open(filename, "rb")
-        data = file.read()
-        file.close()
-        return data
+        return open(filename, "rb").read()
 
     def _zip_insert_binary(self, file, filename, data):
         "Insert a binary file into the zip archive"
