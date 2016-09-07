@@ -396,6 +396,11 @@ class CalcStyles:
         self.property_cell_fontsize = '10'      # Cell Font Size Default
         self.property_cell_valign = 'default'    # Vertial Alignment Default
         self.property_cell_halign = 'default'    # Horizantal Alignment Default
+        self.cardinal = ['top', 'right', 'bottom', 'left'] # four cardinal
+        self.property_cell_border = [False, False, False, False]
+        self.property_cell_padding = [False, False, False, False]
+        self.property_cell_wrap_option = False
+        self.property_cell_hyphenate = False
 
     def get_next_style(self, style):
         "Returns the next style code for the given style"
@@ -427,6 +432,7 @@ class CalcStyles:
             if name == 'italic' and type(value) == type(True): self.property_cell_italic = value
             if name == 'underline' and type(value) == type(True): self.property_cell_underline = value
             if name == 'fontsize': self.property_cell_fontsize = value
+            if name == 'hyphenate': self.property_cell_hyphenate = value
             if name == 'color':
                 self.property_cell_fg_color = 'default'
                 redata = re.search("^(#[\da-fA-F]{6})$", value)
@@ -441,6 +447,20 @@ class CalcStyles:
                 self.property_cell_valign = value
             if name == 'halign':
                 self.property_cell_halign = value
+            if name == 'wrap-option':
+                self.property_cell_wrap_option = value
+
+            self.init_cell_cardinal('border', name, value)
+            self.init_cell_cardinal('padding', name, value)
+
+    def init_cell_cardinal(self, key, name, value):
+        "Init property border, padding"
+        property = getattr(self, 'property_cell_%s' % key)
+        if name == key:
+            setattr(self, 'property_cell_%s' % key, [value] * 4)
+        match = re.match('%s-(top|right|bottom|left)' % key, name)
+        if match:
+            property[self.cardinal.index(match.group(1))] = value
 
     def get_style_code(self, style):
         style_code = ""
@@ -474,6 +494,8 @@ class CalcStyles:
             if self.property_cell_underline: style_data.append(('underline', True))
             if self.property_cell_fontsize != '10':
                 style_data.append(('fontsize', self.property_cell_fontsize))
+            if self.property_cell_hyphenate:
+                style_data.append(('hyphenate', 'true'))
             if self.property_cell_fg_color != 'default':
                 style_data.append(('color', self.property_cell_fg_color))
             if self.property_cell_bg_color != 'default':
@@ -484,6 +506,11 @@ class CalcStyles:
                 style_data.append(('valign', self.property_cell_valign))
             if self.property_cell_halign != 'default':
                 style_data.append(('halign', self.property_cell_halign))
+            if self.property_cell_wrap_option:
+                style_data.append(('wrap-option', self.property_cell_wrap_option))
+
+            style_data.extend(self.get_cardinal_style('border'))
+            style_data.extend(self.get_cardinal_style('padding'))
 
             style_data = tuple(style_data)
             if style_data in self.style_config:
@@ -494,6 +521,21 @@ class CalcStyles:
                 style_code = self.get_next_style(style)
                 self.style_config[style_data] = style_code
         return style_code
+
+    def get_cardinal_style(self, key):
+        "Get cardinal styles"
+        style_data = []
+        property = getattr(self, 'property_cell_%s' % key)
+        borders = tuple(set(property))
+        if not (borders[0] is False and len(borders) == 1):
+            if len(borders) == 1:
+                style_data.append((key, borders[0]))
+            else:
+                for pos in range(4):
+                    value = property[pos]
+                    if value:
+                        style_data.append(('%s-%s' % (key, self.cardinal[pos]), value))
+        return style_data
 
     def get_automatic_styles(self):
         "Return 'office:automatic-styles' lists"
@@ -560,6 +602,12 @@ class CalcStyles:
                             tagline.append(['element', 'style:repeat-content', 'true'])
                         else:
                             tagline.append(['element', 'style:repeat-content', 'false'])
+                    elif name == 'wrap-option':
+                        tagline.append(['element', 'fo:wrap-option', value])
+                    elif re.match('border', name):
+                        tagline.append(['element', 'fo:%s' % name, value])
+                    elif re.match('padding', name):
+                        tagline.append(['element', 'fo:%s' % name, value])
 
                 # Add any additional internal tags
                 while tagline_additional:
@@ -601,6 +649,8 @@ class CalcStyles:
                         tagline.append(['element', 'fo:color', value])
                     elif name == 'fontsize':
                         tagline.append(['element', 'fo:font-size', '%spt' % value])
+                    if name == 'hyphenate':
+                        tagline.append(['element', 'fo:hyphenate', value])
                 style_list.append(tagline)
 
                 automatic_styles.append(style_list)
