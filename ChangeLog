@@ -1,0 +1,88 @@
+ooolib-python Change Log
+
+ooolib-python-0.0.17 (August 26, 2009)
+	- Moved examples into example dir - Joseph Colton
+	- save method properly closes files - Joseph Colton
+	- Moved ooolib.py to ooolib/__init__.py - Joseph Colton
+	- setup.py file for installation - Paul Tremblay <phthenry@iglou.com>
+
+ooolib-python-0.0.16 (July 30, 2008)
+	- Minor bug fixes - Joseph Colton
+	- New formula handling - Joseph Colton
+	
+ooolib-python-0.0.15 (July 3, 2008)
+	- Handle more internal cell data types - Joseph Colton
+	- Handle non-ascii characters better - Joseph Colton
+	- Non-ascii support tests - Chris Ender (chris.ender@web.de)
+
+ooolib-python-0.0.14 (June 25, 2008)
+	- Handle repeated columns better - Joseph Colton
+	- Experiments working with UTF-8 - Joseph Colton
+	
+ooolib-python-0.0.13 (May 13, 2008)
+	- Added Calc content data loading - Joseph Colton
+	- Added various get functions - Joseph Colton
+	
+ooolib-python-0.0.12 (May 11, 2008)
+	- Added Calc meta data load function - Joseph Colton
+	- Added calc-example09 - Joseph Colton
+
+ooolib-python-0.0.11 (September 15, 2007)
+	- Added Vertical alignment - Joseph Colton
+	- Added Horizontal alignment - Joseph Colton
+	- Added calc-example08 - Joseph Colton
+	
+ooolib-python-0.0.10 (August 30, 2007)
+	- Added font sizes - Joseph Colton
+
+ooolib-python-0.0.9 (June 29, 2007)
+	- Added Annotation - Hemanth Sethuram (hemanthps@gmail.com)
+	- Added Links - Hemanth Sethuram (hemanthps@gmail.com)
+	- Added calc-example07 - Hemanth Sethuram (hemanthps@gmail.com)
+	
+ooolib-python-0.0.8 (December 23, 2006)
+	- Fixed clean_string function - Joseph Colton
+	- Created Meta class - Joseph Colton
+	- Created Writer class - Joseph Colton
+	- Fixed creation date - Joseph Colton
+	- Created Writer content.xml method - Joseph Colton
+	- Created Writer manifest.xml method - Joseph Colton
+	
+ooolib-python-0.0.7 (December 16, 2006)
+	- Added formula types - Joseph Colton
+	
+ooolib-python-0.0.6 (December 9, 2006)
+	- Added font color and background colors - Joseph Colton
+	- Added Title, Subject, and Description - Joseph Colton
+	
+ooolib-python-0.0.5 (November 20, 2006)
+	- Added functions for bold, italics, and underline - Joseph Colton
+	
+ooolib-python-0.0.4 (November 18, 2006)
+	- Created function to set row height - Joseph Colton
+	- Can set User Defined meta values - Joseph Colton
+	
+ooolib-python-0.0.3 (November 17, 2006)
+	- Created CalcStyles Class - Joseph Colton
+	- Created function to set column width - Joseph Colton
+	
+ooolib-python-0.0.2 (November 16, 2006)
+	- Changed License to LGPL - Joseph Colton
+	- Allow Overriding of "Sheet1" name - Vineet Jain <vinjvinj@gmail.com>
+	- Replace XML unfriendly characters - Joseph Colton
+	
+ooolib-python-0.0.1 (October 6, 2006)
+	- Created CalcSheet class - Joseph Colton
+	- Created functions for multiple sheets - Joseph Colton
+	- Can now set cell values - Joseph Colton
+	- Created example programs - Joseph Colton
+
+ooolib-python-0.0.0 (October 5, 2006)
+	- Created XML class - Joseph Colton
+	- Created XML convert method - Joseph Colton
+	- Created Calc class - Joseph Colton
+	- Created static Calc content.xml method - Joseph Colton
+	- Created static Calc manifest.xml method - Joseph Colton
+	- Created static Calc meta.xml method - Joseph Colton
+	- Created static Calc settings.xml method - Joseph Colton
+	- Created static Calc styles.xml method - Joseph Colton
