@@ -122,3 +122,18 @@ class TestCell(unittest.TestCase):
 
         cell_style = xdoc.xpath('//text:p[text()="No-padding"]/../@table:style-name', namespaces=self.namespaces)
         self.assertEqual(cell_style, [])
+
+
+class TestCalcSheet(unittest.TestCase):
+
+    def test_clean_formula(self):
+        sheet = ooolib.CalcSheet('Sheet Name')
+
+        data = sheet.clean_formula('The test.')
+        self.assertEqual(data, 'The test.')
+
+        data = sheet.clean_formula('=SUM(A1:A2)')
+        self.assertEqual(data, 'oooc:=SUM([.A1]:[.A2])')
+
+        data = sheet.clean_formula('=IF((A5>A4);A4;"The test.")')
+        self.assertEqual(data, 'oooc:=IF(([.A5]&amp;gt;[.A4]);[.A4];&amp;quot;The test.&amp;quot;)')
