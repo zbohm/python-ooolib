@@ -135,5 +135,5 @@ class TestCalcSheet(unittest.TestCase):
         data = sheet.clean_formula('=SUM(A1:A2)')
         self.assertEqual(data, 'oooc:=SUM([.A1]:[.A2])')
 
-        data = sheet.clean_formula('=IF((A5>A4);A4;"The test.")')
-        self.assertEqual(data, 'oooc:=IF(([.A5]&amp;gt;[.A4]);[.A4];&amp;quot;The test.&amp;quot;)')
+        data = sheet.clean_formula('=IF((A5>A4);A3;"The test.")')
+        self.assertEqual(data, 'oooc:=IF(([.A5]&gt;[.A4]);[.A3];&quot;The test.&quot;)')

@@ -20,7 +20,6 @@
 # You can contact me by email at josephcolton@gmail.com
 
 # Import Standard Modules
-import cgi
 import zipfile           # Needed for reading/writing documents
 import time
 import re
@@ -697,7 +696,7 @@ class CalcSheet(object):
         if redata:
             # funct is the function name.  The rest if the string will be the funct_args
             funct = redata.group(1)
-            funct_args = cgi.escape(re.sub('([A-Z]+\d+)', '[.\\1]', redata.group(2)), 'quot')
+            funct_args = re.sub('([A-Z]+\d+)', '[.\\1]', redata.group(2))
             data = 'oooc:=%s%s' % (funct, funct_args)
         return data
 
