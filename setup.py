@@ -14,5 +14,5 @@ setup(name="ooolib-python",
       maintainer_email="zdenek.bohm@nic.cz",
       license = 'GNU LGPL',
       url = "https://github.com/zbohm/python-ooolib",
-      packages=['ooolib']
+      packages=['ooolib', 'ooolib.tests']
       )
