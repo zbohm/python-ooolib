@@ -29,7 +29,7 @@ import xml.parsers.expat # Needed for parsing documents
 
 def version_number():
     "Get the ooolib-python version number"
-    return "0.0.17"
+    return "0.0.18"
 
 
 def version():

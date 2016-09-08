@@ -80,3 +80,45 @@ class TestCell(unittest.TestCase):
                                       namespaces=self.namespaces)
         cell_style = xdoc.xpath('//text:p[text()="Name"]/../@table:style-name', namespaces=self.namespaces)
         self.assertEqual(cell_style, style_definition)
+
+    def test_cell_padding(self):
+        # create odt document
+        filename = os.path.join(self.dirname, "test.ods")
+        doc = ooolib.Calc("test_cell")
+        doc.set_cell_property('padding-left', '0.1in')
+        doc.set_cell_value(2, 2, "string", "Left")
+        doc.set_cell_property('padding-left', False)
+
+        doc.set_cell_property('padding-right', '0.2in')
+        doc.set_cell_value(3, 2, "string", "Right")
+        doc.set_cell_property('padding-right', False)
+
+        doc.set_cell_property('padding', '0.3in')
+        doc.set_cell_value(4, 2, "string", "Full")
+        doc.set_cell_property('padding', False)
+
+        doc.set_cell_value(5, 2, "string", "No-padding")
+
+        doc.save(filename)
+
+        # check created document
+        handle = zipfile.ZipFile(filename)
+        xdoc = etree.parse(StringIO(handle.read('content.xml')))
+
+        style_definition = xdoc.xpath('//style:table-cell-properties[@fo:padding-left="0.1in"]/../@style:name',
+                                      namespaces=self.namespaces)
+        cell_style = xdoc.xpath('//text:p[text()="Left"]/../@table:style-name', namespaces=self.namespaces)
+        self.assertEqual(cell_style, style_definition)
+
+        style_definition = xdoc.xpath('//style:table-cell-properties[@fo:padding-right="0.2in"]/../@style:name',
+                                      namespaces=self.namespaces)
+        cell_style = xdoc.xpath('//text:p[text()="Right"]/../@table:style-name', namespaces=self.namespaces)
+        self.assertEqual(cell_style, style_definition)
+
+        style_definition = xdoc.xpath('//style:table-cell-properties[@fo:padding="0.3in"]/../@style:name',
+                                      namespaces=self.namespaces)
+        cell_style = xdoc.xpath('//text:p[text()="Full"]/../@table:style-name', namespaces=self.namespaces)
+        self.assertEqual(cell_style, style_definition)
+
+        cell_style = xdoc.xpath('//text:p[text()="No-padding"]/../@table:style-name', namespaces=self.namespaces)
+        self.assertEqual(cell_style, [])

@@ -1,5 +1,16 @@
 ooolib-python Change Log
 
+ooolib-python-0.0.18 (September 8, 2016)
+    - Clone project from https://sourceforge.net/projects/ooolib/
+    - Remove tabulators as an indetation in the code.
+    - Simplify some code statements - clean_formula, meta_time, _file_load.
+    - Add cell atributes border, padding, wrap and hyphenate.
+    - Add missing spaces between tokens. Rename variables in conflict with the other code.
+    - Remove unused imports; base class to object; remove redundant empty lines.
+    - Remove redundant brackets; compare value types by isinstance.
+    - Close zipfile savefile in Calc.save.
+    - Add tests for new features - border, padding, wrap and hyphenate.
+
 ooolib-python-0.0.17 (August 26, 2009)
 	- Moved examples into example dir - Joseph Colton
 	- save method properly closes files - Joseph Colton
