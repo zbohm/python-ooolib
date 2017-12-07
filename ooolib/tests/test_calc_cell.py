@@ -1,11 +1,16 @@
 import os
 import unittest
 import zipfile
-from StringIO import StringIO
+
+from lxml import etree
 
 import ooolib
-from lxml import etree
 from ooolib.tests.utils import prepare_mkdtemp
+
+try:
+    from StringIO import StringIO as BufferIO
+except ImportError:
+    from io import BytesIO as BufferIO
 
 
 class TestCell(unittest.TestCase):
@@ -35,7 +40,7 @@ class TestCell(unittest.TestCase):
 
         # check created document
         handle = zipfile.ZipFile(filename)
-        xdoc = etree.parse(StringIO(handle.read('content.xml')))
+        xdoc = etree.parse(BufferIO(handle.read('content.xml')))
 
         style_definition = xdoc.xpath('//style:table-cell-properties[@fo:border="%s"]/../@style:name' % thin_value,
                                       namespaces=self.namespaces)
@@ -57,7 +62,7 @@ class TestCell(unittest.TestCase):
 
         # check created document
         handle = zipfile.ZipFile(filename)
-        xdoc = etree.parse(StringIO(handle.read('content.xml')))
+        xdoc = etree.parse(BufferIO(handle.read('content.xml')))
 
         style_definition = xdoc.xpath('//style:table-cell-properties[@fo:wrap-option="wrap"]/../@style:name',
                                       namespaces=self.namespaces)
@@ -74,7 +79,7 @@ class TestCell(unittest.TestCase):
 
         # check created document
         handle = zipfile.ZipFile(filename)
-        xdoc = etree.parse(StringIO(handle.read('content.xml')))
+        xdoc = etree.parse(BufferIO(handle.read('content.xml')))
 
         style_definition = xdoc.xpath('//style:text-properties[@fo:hyphenate="true"]/../@style:name',
                                       namespaces=self.namespaces)
@@ -103,7 +108,7 @@ class TestCell(unittest.TestCase):
 
         # check created document
         handle = zipfile.ZipFile(filename)
-        xdoc = etree.parse(StringIO(handle.read('content.xml')))
+        xdoc = etree.parse(BufferIO(handle.read('content.xml')))
 
         style_definition = xdoc.xpath('//style:table-cell-properties[@fo:padding-left="0.1in"]/../@style:name',
                                       namespaces=self.namespaces)

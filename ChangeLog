@@ -1,5 +1,8 @@
 ooolib-python Change Log
 
+ooolib-python-0.0.19 (December 7, 2017)
+    - Make code Python 3 compatible.
+
 ooolib-python-0.0.18 (September 8, 2016)
     - Clone project from https://sourceforge.net/projects/ooolib/
     - Remove tabulators as an indetation in the code.
