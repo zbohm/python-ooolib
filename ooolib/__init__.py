@@ -28,7 +28,7 @@ import xml.parsers.expat # Needed for parsing documents
 
 def version_number():
     "Get the ooolib-python version number"
-    return "0.0.20"
+    return "0.0.21"
 
 
 def version():
@@ -38,6 +38,9 @@ def version():
 
 def clean_string(data):
     "Returns an XML friendly copy of the data string"
+
+    data = u"{}".format(data)  # This line thanks to Chris Ender (and updated for Py2/Py3 by Zdenek Bohm)
+
     data = data.replace('&', '&amp;')
     data = data.replace("'", '&apos;')
     data = data.replace('"', '&quot;')
@@ -760,6 +763,7 @@ class CalcSheet(object):
         if datatype not in ('string', 'float', 'formula', 'annotation', 'link'):
             # Set all unknown cell types to string
             datatype = 'string'
+            datavalue = u"{}".format(datavalue)
 
         # The following lines are taken directly from HPS
         # self.sheet_values[cell] = (datatype, datavalue)

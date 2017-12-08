@@ -147,6 +147,15 @@ class TestCalcSheet(unittest.TestCase):
         self.assertEqual(data, 'oooc:=IF(([.A5]&gt;[.A4]);[.A3];&quot;The test.&quot;)')
 
 
+class Bird(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return "bird {}".format(self.name)
+
+
 class TestUnicode(unittest.TestCase):
 
     def test_sheet_name(self):
@@ -157,6 +166,11 @@ class TestUnicode(unittest.TestCase):
         doc = ooolib.Calc('Žluťoučký kůň')
         doc.set_cell_value(2, 2, 'šílený', 'čížek')
         self.assertEqual(doc.get_cell_value(2, 2), ('string', 'čížek'))
+
+    def test_sheet_datatype_and_value_object(self):
+        doc = ooolib.Calc('Žluťoučký kůň')
+        doc.set_cell_value(2, 2, 'string', Bird('čížek'))
+        self.assertEqual(doc.get_cell_value(2, 2), ('string', 'bird čížek'))
 
     def test_clean_formula_apos(self):
         doc = ooolib.Calc('Žluťoučký kůň')
