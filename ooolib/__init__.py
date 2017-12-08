@@ -28,7 +28,7 @@ import xml.parsers.expat # Needed for parsing documents
 
 def version_number():
     "Get the ooolib-python version number"
-    return "0.0.19"
+    return "0.0.20"
 
 
 def version():
@@ -687,7 +687,6 @@ class CalcSheet(object):
         # datavalue = 'oooc:=SUM([.A1:.A2])'
         # '=IF((A5>A4);A4;"")'
         # datavalue = 'oooc:=IF(([.A5]&gt;[.A4]);[.A4];&quot;&quot;)'
-        data = str(data)
         data = clean_string(data)
         redata = re.search('^=([A-Z]+)(\(.*)$', data)
         if redata:
@@ -758,11 +757,9 @@ class CalcSheet(object):
         # Adjust maximum sizes
         if col > self.max_col: self.max_col = col
         if row > self.max_row: self.max_row = row
-        datatype = str(datatype)
         if datatype not in ('string', 'float', 'formula', 'annotation', 'link'):
             # Set all unknown cell types to string
             datatype = 'string'
-            datavalue = str(datavalue)
 
         # The following lines are taken directly from HPS
         # self.sheet_values[cell] = (datatype, datavalue)

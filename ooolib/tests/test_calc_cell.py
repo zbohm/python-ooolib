@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import os
 import unittest
 import zipfile
@@ -142,3 +145,27 @@ class TestCalcSheet(unittest.TestCase):
 
         data = sheet.clean_formula('=IF((A5>A4);A3;"The test.")')
         self.assertEqual(data, 'oooc:=IF(([.A5]&gt;[.A4]);[.A3];&quot;The test.&quot;)')
+
+
+class TestUnicode(unittest.TestCase):
+
+    def test_sheet_name(self):
+        doc = ooolib.Calc('Žluťoučký kůň')
+        self.assertEqual(doc.sheets[0].sheet_name, 'Žluťoučký kůň')
+
+    def test_sheet_datatype_and_value(self):
+        doc = ooolib.Calc('Žluťoučký kůň')
+        doc.set_cell_value(2, 2, 'šílený', 'čížek')
+        self.assertEqual(doc.get_cell_value(2, 2), ('string', 'čížek'))
+
+    def test_clean_formula_apos(self):
+        doc = ooolib.Calc('Žluťoučký kůň')
+        sheet = doc.sheets[0]
+        data = sheet.clean_formula("=UNICODE('Žluťoučký kůň příšerně úpěl ďábelské ódy.')")
+        self.assertEqual(data, "oooc:=UNICODE(&apos;Žluťoučký kůň příšerně úpěl ďábelské ódy.&apos;)")
+
+    def test_clean_formula_quot(self):
+        doc = ooolib.Calc('Žluťoučký kůň')
+        sheet = doc.sheets[0]
+        data = sheet.clean_formula('=UNICODE("Žluťoučký kůň příšerně úpěl ďábelské ódy.")')
+        self.assertEqual(data, "oooc:=UNICODE(&quot;Žluťoučký kůň příšerně úpěl ďábelské ódy.&quot;)")
