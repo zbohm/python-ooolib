@@ -727,7 +727,7 @@ class CalcSheet(object):
         "Sets Style Code for a given location"
         self.sheet_config[location] = style_code
 
-    def set_sheet_value(self, cell, datatype, datavalue):
+    def set_sheet_value(self, cell, datatype, datavalue, formula_value='0'):
         """Sets the value for a specific cell
 
         cell must be in the format (col, row) where row and col are int.
@@ -776,6 +776,8 @@ class CalcSheet(object):
             contents['link'] = (datatype, datavalue)
         else:
             contents['value'] = (datatype, datavalue)
+        if datatype == 'formula':
+            contents['formula_value'] = formula_value
 
         self.sheet_values[cell] = contents
 
@@ -846,8 +848,8 @@ class CalcSheet(object):
                             if datatype == 'formula':
                                 collist.append(['element', 'table:formula', datavalue])
                                 collist.append(['element', 'office:value-type', 'float'])
-                                collist.append(['element', 'office:value', '0'])
-                                datavalue = '0'
+                                collist.append(['element', 'office:value', contents['formula_value']])
+                                datavalue = contents['formula_value']
                         else:
                             datavalue = None
 
@@ -1011,9 +1013,9 @@ class Calc(object):
         self.sheets.append(CalcSheet(sheetname))
         return self.sheet_index
 
-    def set_cell_value(self, col, row, datatype, value):
+    def set_cell_value(self, col, row, datatype, value, formula_value='0'):
         "Set the value for a given cell"
-        self.sheets[self.sheet_index].set_sheet_value((col, row), datatype, value)
+        self.sheets[self.sheet_index].set_sheet_value((col, row), datatype, value, formula_value)
         style_code = self.styles.get_style_code('cell')
         self.sheets[self.sheet_index].set_sheet_config((col, row), style_code)
 
