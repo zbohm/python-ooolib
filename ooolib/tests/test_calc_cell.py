@@ -138,6 +138,13 @@ class TestCell(unittest.TestCase):
         doc.set_cell_value(3, 1, "formula", "=A1+B1", 3)
         self.assertEqual(doc.sheets[0].sheet_values[(3, 1)]['formula_value'], 3)
 
+    def test_default_cell_formula_value(self):
+        doc = ooolib.Calc("test_cell")
+        doc.set_cell_value(1, 1, "float", 1)
+        doc.set_cell_value(2, 1, "float", 2)
+        doc.set_cell_value(3, 1, "formula", "=A1+B1")
+        self.assertEqual(doc.sheets[0].sheet_values[(3, 1)]['formula_value'], "0")
+
 
 class TestCalcSheet(unittest.TestCase):
 
