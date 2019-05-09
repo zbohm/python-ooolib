@@ -15,14 +15,14 @@ setuptools.setup(
       author_email="joseph@colton.byuh.edu",
       maintainer=u"Zdeněk Böhm",
       maintainer_email="zdenek.bohm@nic.cz",
-      license='GNU LGPL',
+      license='MIT',
       url="https://github.com/zbohm/python-ooolib",
       long_description=long_description,
       packages=['ooolib', 'ooolib.tests'],
       classifiers=[
          "Programming Language :: Python :: 2.7",
          "Programming Language :: Python :: 3",
-         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+         "License :: OSI Approved :: MIT License",
          "Operating System :: OS Independent",
       ]
 )
