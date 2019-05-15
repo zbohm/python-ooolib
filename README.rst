@@ -14,7 +14,7 @@
 	   :target: https://pypi.python.org/pypi/ooolib-python
 
 .. image:: https://img.shields.io/pypi/l/ooolib-python.svg
-	   :target: https://raw.githubusercontent.com/zbohm/ooolib-python/master/LICENSE.txt
+	   :target: https://raw.githubusercontent.com/zbohm/python-ooolib/master/LICENSE.txt
 
 
 =============

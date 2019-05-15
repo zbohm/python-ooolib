@@ -1,5 +1,8 @@
 ooolib-python Change Log
 
+ooolib-python-0.0.22 (January 8, 2018)
+    - Fix displaying formula value.
+
 ooolib-python-0.0.21 (December 8, 2017)
     - Return back converting any object to the unicode (works in version 0.0.18).
 
