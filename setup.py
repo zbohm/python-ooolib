@@ -3,7 +3,7 @@
 import setuptools
 import ooolib
 
-with open("README.md", "r") as fh:
+with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 
@@ -20,6 +20,7 @@ setuptools.setup(
       long_description=long_description,
       packages=['ooolib', 'ooolib.tests'],
       classifiers=[
+         "Development Status :: 5 - Production/Stable",
          "Programming Language :: Python :: 2.7",
          "Programming Language :: Python :: 3",
          "License :: OSI Approved :: MIT License",
