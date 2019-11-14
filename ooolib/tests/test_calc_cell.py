@@ -216,3 +216,25 @@ class TestGetCellContent(unittest.TestCase):
         doc = ooolib.Calc('Test')
         doc.set_cell_value(1, 1, 'annotation', 'foo')
         self.assertEqual(doc.get_cell_annotation(1, 1), ('annotation', 'foo'))
+
+
+class TestParseContent(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        path = os.path.join(os.path.dirname(__file__), "fixtures/test-cells.ods")
+        cls.doc = ooolib.Calc(opendoc=path)
+
+    def test_content_parse(self):
+        self.assertEqual(self.doc.get_cell_value(1, 1), ('string', 'text'))
+        self.assertIsNone(self.doc.get_cell_link(1, 1))
+        self.assertIsNone(self.doc.get_cell_annotation(1, 1))
+
+        self.assertEqual(self.doc.get_cell_value(1, 2), ('float', '42'))
+        self.assertEqual(self.doc.get_cell_value(1, 3), ('string', 'link: https://www.nic.cz/'))
+        self.assertEqual(self.doc.get_cell_value(1, 4), ('string', 'link with label: https://www.mojeid.cz/'))
+
+        self.assertEqual(self.doc.get_cell_link(1, 3), ('https://www.nic.cz/', 'https://www.nic.cz'))
+        self.assertEqual(self.doc.get_cell_link(1, 4), ('https://www.mojeid.cz/', 'MojeID'))
+
+        self.assertEqual(self.doc.get_cell_value(1, 5), ('string', 'Comment.'))
