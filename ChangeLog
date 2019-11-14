@@ -1,5 +1,10 @@
 ooolib-python Change Log
 
+ooolib-python-0.1.0 (November 14, 2019)
+	- Add functions get_cell_content, get_cell_annotation, get_cell_links.
+	- Extend tests for TestGetCellContent, TestParseContent.
+	- Add fixtures test-cells.ods.
+
 ooolib-python-0.0.22 (January 8, 2018)
     - Fix displaying formula value.
 
