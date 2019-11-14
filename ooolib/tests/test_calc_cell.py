@@ -210,7 +210,7 @@ class TestGetCellContent(unittest.TestCase):
     def test_link(self):
         doc = ooolib.Calc('Test')
         doc.set_cell_value(1, 1, 'link', ('url', 'label'))
-        self.assertEqual(doc.get_cell_link(1, 1), ('url', 'label'))
+        self.assertEqual(doc.get_cell_links(1, 1), [('url', 'label')])
 
     def test_annotation(self):
         doc = ooolib.Calc('Test')
@@ -227,14 +227,20 @@ class TestParseContent(unittest.TestCase):
 
     def test_content_parse(self):
         self.assertEqual(self.doc.get_cell_value(1, 1), ('string', 'text'))
-        self.assertIsNone(self.doc.get_cell_link(1, 1))
+        self.assertIsNone(self.doc.get_cell_links(1, 1))
         self.assertIsNone(self.doc.get_cell_annotation(1, 1))
 
         self.assertEqual(self.doc.get_cell_value(1, 2), ('float', '42'))
         self.assertEqual(self.doc.get_cell_value(1, 3), ('string', 'link: https://www.nic.cz/'))
         self.assertEqual(self.doc.get_cell_value(1, 4), ('string', 'link with label: https://www.mojeid.cz/'))
 
-        self.assertEqual(self.doc.get_cell_link(1, 3), ('https://www.nic.cz/', 'https://www.nic.cz'))
-        self.assertEqual(self.doc.get_cell_link(1, 4), ('https://www.mojeid.cz/', 'MojeID'))
+        self.assertEqual(self.doc.get_cell_links(1, 3), [('https://www.nic.cz/', 'https://www.nic.cz')])
+        self.assertEqual(self.doc.get_cell_links(1, 4), [('https://www.mojeid.cz/', 'MojeID')])
 
         self.assertEqual(self.doc.get_cell_value(1, 5), ('string', 'Comment.'))
+        self.assertEqual(self.doc.get_cell_value(1, 6), (
+            'string', 'Cell with two links: https://www.nic.cz/ and https://www.mojeid.cz/.'))
+        self.assertEqual(self.doc.get_cell_links(1, 6), [
+            ('https://www.nic.cz/', 'CZ.NIC'),
+            ('https://www.mojeid.cz/', 'MojeID'),
+        ])

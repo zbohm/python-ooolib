@@ -769,11 +769,14 @@ class CalcSheet(object):
         # self.sheet_values[cell] = (datatype, datavalue)
         # HPS: Cell content is now a list of tuples instead of a tuple
         # While storing here, store the cell contents first and the annotation next. While generating the XML reverse this
-        contents = self.sheet_values.get(cell, {'annotation': None, 'link': None, 'value': None})
+        contents = self.sheet_values.get(cell, {'annotation': None, 'links': None, 'value': None})
         if datatype == 'annotation':
             contents['annotation'] = (datatype, datavalue)
         elif datatype == 'link':
-            contents['link'] = (datatype, datavalue)
+            if contents['links']:
+                contents['links'][1].append(datavalue)
+            else:
+                contents['links'] = (datatype, [datavalue])
         else:
             contents['value'] = (datatype, datavalue)
         if datatype == 'formula':
@@ -858,16 +861,17 @@ class CalcSheet(object):
                             collist.append(['tag', 'office:annotation',
                               ['tag', 'text:p', ['data', annoval]]])
 
-                        if contents['link']:
-                            (linktype, linkval) = contents['link']
+                        if contents['links']:
+                            (linktype, linkvals) = contents['links']
+                            # TODO: parse all urls, not only linkvals[0].
                             if datavalue:
                                 collist.append(['tag', 'text:p', ['data', datavalue],
-                                  ['tag', 'text:a', ['element', 'xlink:href', linkval[0]],
-                                  ['data', linkval[1]]]])
+                                  ['tag', 'text:a', ['element', 'xlink:href', linkvals[0][0]],
+                                  ['data', linkvals[0][1]]]])
                             else: # no value; just fill the link
                                 collist.append(['tag', 'text:p',
-                                  ['tag', 'text:a', ['element', 'xlink:href', linkval[0]],
-                                  ['data', linkval[1]]]])
+                                  ['tag', 'text:a', ['element', 'xlink:href', linkvals[0][0]],
+                                  ['data', linkvals[0][1]]]])
                         else:
                             if datavalue:
                                 collist.append(['tag', 'text:p', ['data', datavalue]])
@@ -1029,11 +1033,11 @@ class Calc(object):
         sheetvalue = self.get_cell_content(col, row)
         return sheetvalue.get("annotation") if isinstance(sheetvalue, dict) else sheetvalue
 
-    def get_cell_link(self, col, row):
-        "Get a cell link. The link is tuple (url, label)."
+    def get_cell_links(self, col, row):
+        "Get a cell links. The links is list of tuples [(url, label), ...]."
         sheetvalue = self.get_cell_content(col, row)
         if isinstance(sheetvalue, dict):
-            link = sheetvalue.get("link")
+            link = sheetvalue.get("links")
             return None if link is None else link[1]
         return sheetvalue
 
