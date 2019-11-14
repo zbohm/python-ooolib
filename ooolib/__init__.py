@@ -900,6 +900,7 @@ class Calc(object):
         # Data Parsing
         self.parser_element_list = []
         self.parser_element = ""
+        self.parser_element_attrs = {}
         self.parser_sheet_num = 0
         self.parser_sheet_row = 0
         self.parser_sheet_column = 0
@@ -1019,17 +1020,27 @@ class Calc(object):
         style_code = self.styles.get_style_code('cell')
         self.sheets[self.sheet_index].set_sheet_config((col, row), style_code)
 
+    def get_cell_content(self, col, row):
+        "Get a cell content for a given cell. Content is a dict with keys annotation, value, link."
+        return self.sheets[self.sheet_index].get_sheet_value(col, row)
+
+    def get_cell_annotation(self, col, row):
+        "Get a cell annotation."
+        sheetvalue = self.get_cell_content(col, row)
+        return sheetvalue.get("annotation") if isinstance(sheetvalue, dict) else sheetvalue
+
+    def get_cell_link(self, col, row):
+        "Get a cell link. The link is tuple (url, label)."
+        sheetvalue = self.get_cell_content(col, row)
+        if isinstance(sheetvalue, dict):
+            link = sheetvalue.get("link")
+            return None if link is None else link[1]
+        return sheetvalue
+
     def get_cell_value(self, col, row):
         "Get a cell value tuple (type, value) for a given cell"
-        sheetvalue = self.sheets[self.sheet_index].get_sheet_value(col, row)
-        # We stop here if there is no value for sheetvalue
-        if sheetvalue is None:
-            return sheetvalue
-        # Now check to see if we have a value tuple
-        if 'value' in sheetvalue:
-            return sheetvalue['value']
-        else:
-            return None
+        sheetvalue = self.get_cell_content(col, row)
+        return sheetvalue.get("value") if isinstance(sheetvalue, dict) else sheetvalue
 
     def load(self, filename):
         """Load .ods spreadsheet.
@@ -1050,9 +1061,10 @@ class Calc(object):
         # styles.xml - I do not remember putting anything here
 
     def parse_content_start_element(self, name, attrs):
-        if self.debug: print('* Start element: {}'.format(name))
+        if self.debug: print('* Start element: {} {}'.format(name, attrs))
         self.parser_element_list.append(name)
         self.parser_element = self.parser_element_list[-1]
+        self.parser_element_attrs = attrs
 
         # Keep track of the current sheet number
         if self.parser_element == 'table:table':
@@ -1157,16 +1169,28 @@ class Calc(object):
     def parse_content_char_data(self, data):
         if self.debug: print("  Character data: {!r}".format(data))
 
-        if self.parser_element == 'text:p' or self.parser_element == 'text:span':
+        if self.parser_element in ('text:p', 'text:span', 'text:a'):
             if self.parser_cell_string_pending:
                 # Set the string and leave string pending mode
                 # This does feel a little kludgy, but it does the job
-                self.parser_cell_string_line = "%s%s" % (self.parser_cell_string_line, data)
+                text = self.parser_element_attrs['xlink:href'] if self.parser_element == 'text:a' else data
+                self.parser_cell_string_line = "%s%s" % (self.parser_cell_string_line, text)
 
                 # I should do this once per cell repeat above 0
                 for i in range(0, self.parser_cell_repeats + 1):
-                    self.set_cell_value(self.parser_sheet_column + i, self.parser_sheet_row,
-                            'string', self.parser_cell_string_line)
+                    self.set_cell_value(
+                        self.parser_sheet_column + i,
+                        self.parser_sheet_row,
+                        'string',
+                        self.parser_cell_string_line
+                    )
+                    if self.parser_element == 'text:a':
+                        self.set_cell_value(
+                            self.parser_sheet_column + i,
+                            self.parser_sheet_row,
+                            'link',
+                            (self.parser_element_attrs['xlink:href'], data)
+                        )
 
     def content_parse(self, data):
         "Parse Content Data from a content.xml file"
