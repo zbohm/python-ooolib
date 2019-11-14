@@ -4,16 +4,17 @@ from __future__ import unicode_literals
 import os
 import unittest
 import zipfile
+import six
 
 from lxml import etree
 
 import ooolib
 from ooolib.tests.utils import prepare_mkdtemp
 
-try:
-    from StringIO import StringIO as BufferIO
-except ImportError:
+if six.PY3:
     from io import BytesIO as BufferIO
+else:
+    from StringIO import StringIO as BufferIO
 
 
 class TestCell(unittest.TestCase):
@@ -197,3 +198,21 @@ class TestUnicode(unittest.TestCase):
         sheet = doc.sheets[0]
         data = sheet.clean_formula('=UNICODE("Žluťoučký kůň příšerně úpěl ďábelské ódy.")')
         self.assertEqual(data, "oooc:=UNICODE(&quot;Žluťoučký kůň příšerně úpěl ďábelské ódy.&quot;)")
+
+
+class TestGetCellContent(unittest.TestCase):
+
+    def test_string(self):
+        doc = ooolib.Calc('Test')
+        doc.set_cell_value(1, 1, 'string', 'text')
+        self.assertEqual(doc.get_cell_value(1, 1), ('string', 'text'))
+
+    def test_link(self):
+        doc = ooolib.Calc('Test')
+        doc.set_cell_value(1, 1, 'link', ('url', 'label'))
+        self.assertEqual(doc.get_cell_link(1, 1), ('url', 'label'))
+
+    def test_annotation(self):
+        doc = ooolib.Calc('Test')
+        doc.set_cell_value(1, 1, 'annotation', 'foo')
+        self.assertEqual(doc.get_cell_annotation(1, 1), ('annotation', 'foo'))
