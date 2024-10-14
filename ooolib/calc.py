@@ -54,6 +54,18 @@ class LOCalc:
 
     def create_settings(self) -> Element:
         """Create settings."""
+        root = ET.Element('office:document-settings', {
+            "xmlns:office": self.ns["office"],
+            "office:version": self.version,
+        })
+        ET.SubElement(root, 'office:settings')
+        return self.parse_element(root)
+
+    def build_settings(self) -> Element:
+        """Build settings."""
+        if self.settings is None:
+            self.settings = self.create_settings()
+        return self.settings
 
     def create_styles(self) -> Element:
         """Create styles."""
@@ -63,20 +75,24 @@ class LOCalc:
 
     def load(self, filename: str) -> None:
         """Load document from filename."""
-        if hasattr(ET, "register_namespace"):
-            for name, uri in self.ns.items():
-                ET.register_namespace(name, uri)
         doc = ET.parse(filename)
         self.meta = doc.getroot()
 
     def save(self, filename: str) -> None:
         """Save document into filename."""
+        if hasattr(ET, "register_namespace"):
+            for name, uri in self.ns.items():
+                ET.register_namespace(name, uri)
         meta = self.build_meta()
         body = ET.tostring(meta, encoding='utf-8', xml_declaration=True)
+        print(body.decode("utf-8"))
+
+        settings = self.build_settings()
+        body = ET.tostring(settings, encoding='utf-8', xml_declaration=True)
         print(body.decode("utf-8"))
 
 
 if __name__ == "__main__":
     calc = LOCalc()
-    # calc.load('template/meta-f.xml')
+    # calc.load('ooolib/template/meta-f.xml')
     calc.save("test.ods")
