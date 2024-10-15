@@ -1,4 +1,6 @@
+import time
 import xml.etree.ElementTree as ET
+import zipfile
 from datetime import datetime
 from io import BytesIO
 from xml.etree.ElementTree import Element
@@ -6,7 +8,7 @@ from xml.etree.ElementTree import Element
 VERSION = "1.0.0"
 
 
-class LOCalc:
+class Calc:
     """LibreOffice Calc."""
 
     ns = {
@@ -18,6 +20,7 @@ class LOCalc:
     encoding = "utf-8"
 
     def __init__(self):
+        self.manifest: Element = None
         self.meta: Element = None
         self.settings: Element = None
         self.styles: Element = None
@@ -42,7 +45,8 @@ class LOCalc:
         ET.SubElement(meta, 'meta:generator', text=f'python-ooolib=={VERSION}')
         return self.parse_element(root)
 
-    def build_meta(self) -> Element:
+    @property
+    def section_meta(self) -> Element:
         """Build meta."""
         if self.meta is None:
             self.meta = self.create_meta()
@@ -61,7 +65,8 @@ class LOCalc:
         ET.SubElement(root, 'office:settings')
         return self.parse_element(root)
 
-    def build_settings(self) -> Element:
+    @property
+    def section_settings(self) -> Element:
         """Build settings."""
         if self.settings is None:
             self.settings = self.create_settings()
@@ -69,9 +74,70 @@ class LOCalc:
 
     def create_styles(self) -> Element:
         """Create styles."""
+        root = ET.Element('office:document-styles', {
+            "xmlns:office": self.ns["office"],
+            "office:version": self.version,
+        })
+        ET.SubElement(root, 'office:styles')
+        return self.parse_element(root)
+
+    @property
+    def section_styles(self) -> Element:
+        """Build styles."""
+        if self.styles is None:
+            self.styles = self.create_styles()
+        return self.styles
 
     def create_content(self) -> Element:
         """Create content."""
+        root = ET.Element('office:document-content', {
+            "xmlns:office": self.ns["office"],
+            "xmlns:table": self.ns["table"],
+            "office:version": self.version,
+        })
+        body = ET.SubElement(root, 'office:body')
+        sheet = ET.SubElement(body, 'office:spreadsheet')
+        table = ET.SubElement(sheet, 'table:table', {"table:name": "List1"})
+        ET.SubElement(table, 'table:table-column', {"table:default-cell-style": "Default"})
+        row = ET.SubElement(table, 'table:table-row')
+        ET.SubElement(row, 'table:table-cell')
+        return self.parse_element(root)
+
+    @property
+    def section_content(self) -> Element:
+        """Build content."""
+        if self.content is None:
+            self.content = self.create_content()
+        return self.content
+
+    def create_manifest(self) -> Element:
+        """Create content."""
+        ns = {
+            "manifest": "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0",
+        }
+        root = ET.Element('manifest:manifest', {
+            "xmlns:manifest": ns["manifest"],
+            "manifest:version": self.version,
+        })
+        ET.SubElement(root, "manifest:file-entry", {
+            "manifest:full-path": "/",
+            "manifest:media-type": "application/vnd.oasis.opendocument.spreadsheet",
+            "manifest:version": self.version,
+        })
+
+        for name in ("meta", "styles", "content", "settings"):
+            ET.SubElement(root, "manifest:file-entry", {
+                "manifest:full-path": f"{name}.xml",
+                "manifest:media-type": "text/xml",
+            })
+        return self.parse_element(root)
+
+    @property
+    def section_manifest(self):
+        """Build manifest."""
+        if self.manifest is None:
+            self.manifest = self.create_manifest()
+        return self.manifest
 
     def load(self, filename: str) -> None:
         """Load document from filename."""
@@ -83,16 +149,55 @@ class LOCalc:
         if hasattr(ET, "register_namespace"):
             for name, uri in self.ns.items():
                 ET.register_namespace(name, uri)
-        meta = self.build_meta()
-        body = ET.tostring(meta, encoding='utf-8', xml_declaration=True)
-        print(body.decode("utf-8"))
 
-        settings = self.build_settings()
-        body = ET.tostring(settings, encoding='utf-8', xml_declaration=True)
-        print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+
+        localtime = time.localtime()[:6]
+        handle = zipfile.ZipFile(filename, "w")
+
+        info = zipfile.ZipInfo("meta.xml")
+        info.date_time = localtime
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True))
+
+        info = zipfile.ZipInfo("mimetype")
+        info.date_time = localtime
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, "application/vnd.oasis.opendocument.text")
+
+        info = zipfile.ZipInfo("META-INF/manifest.xml")
+        info.date_time = localtime
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True))
+
+        info = zipfile.ZipInfo("settings.xml")
+        info.date_time = localtime
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True))
+
+        info = zipfile.ZipInfo("styles.xml")
+        info.date_time = localtime
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True))
+
+        info = zipfile.ZipInfo("content.xml")
+        info.date_time = localtime
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True))
+
+        handle.close()
 
 
 if __name__ == "__main__":
-    calc = LOCalc()
+    calc = Calc()
     # calc.load('ooolib/template/meta-f.xml')
     calc.save("test.ods")
