@@ -190,16 +190,16 @@ class Calc:
             for name, uri in self.ns.items():
                 ET.register_namespace(name, uri)
 
-        body = ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True)
-        print(body.decode("utf-8"))
-        body = ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True)
-        print(body.decode("utf-8"))
-        body = ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True)
-        print(body.decode("utf-8"))
-        body = ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True)
-        print(body.decode("utf-8"))
-        body = ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True)
-        print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
+        # body = ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True)
+        # print(body.decode("utf-8"))
 
         localtime = time.localtime()[:6]
         handle = zipfile.ZipFile(filename, "w")
@@ -207,17 +207,19 @@ class Calc:
         info = zipfile.ZipInfo("meta.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True))
+        handle.writestr(info, open("ooolib/template/meta.xml").read())
 
         info = zipfile.ZipInfo("mimetype")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, "application/vnd.oasis.opendocument.text")
+        handle.writestr(info, "application/vnd.oasis.opendocument.spreadsheet")
 
         info = zipfile.ZipInfo("META-INF/manifest.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True))
+        handle.writestr(info, open("ooolib/template/META-INF/manifest.xml").read())
 
         info = zipfile.ZipInfo("manifest.rdf")
         info.date_time = localtime
@@ -227,17 +229,48 @@ class Calc:
         info = zipfile.ZipInfo("settings.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True))
+        handle.writestr(info, open("ooolib/template/settings.xml").read())
 
         info = zipfile.ZipInfo("styles.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True))
+        handle.writestr(info, open("ooolib/template/styles.xml").read())
 
         info = zipfile.ZipInfo("content.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True))
+        handle.writestr(info, open("ooolib/template/content.xml").read())
+
+        info = zipfile.ZipInfo('Configurations2/accelerator/current.xml', date_time=localtime)
+        handle.writestr(info, b"")
+        # for name in (
+        #     "accelerator",
+        #     "floater",
+        #     "images",
+        #     "menubar",
+        #     "popupmenu",
+        #     "progressbar",
+        #     "statusbar",
+        #     "toolbar",
+        #     "toolpanel",
+        # ):
+        #     handle.mkdir(f'Configurations2/{name}', mode=511)
+
+            # info = zipfile.ZipInfo(f'Configurations2/{name}', date_time=localtime)
+            # handle.writestr(info, b"")
+            # info = zipfile.ZipInfo(f'Configurations2/{name}')
+            # # info.compress_type = zipfile.ZIP_DEFLATED
+            # handle.writestr(info, b"")
+
+        info = zipfile.ZipInfo(f'Configurations2/images/Bitmaps', date_time=localtime)
+        handle.writestr(info, b"")
+
+        info = zipfile.ZipInfo('Thumbnails/thumbnail.png', date_time=localtime)
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, open("ooolib/template/Thumbnails/thumbnail.png", "rb").read())
 
         handle.close()
 
@@ -245,4 +278,4 @@ class Calc:
 if __name__ == "__main__":
     calc = Calc()
     # calc.load('ooolib/template/meta-f.xml')
-    calc.save("test.ods")
+    calc.save("test-11.ods")
