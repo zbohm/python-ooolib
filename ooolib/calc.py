@@ -45,6 +45,11 @@ class Calc:
         creation_date = ET.SubElement(meta, 'meta:creation-date')
         creation_date.text = datetime.now().isoformat()
         ET.SubElement(meta, 'meta:generator', text=f'ooolib-python=={VERSION}')
+        ET.SubElement(meta, 'document-statistic', {
+            "meta:table-count": "1",  # TODO: Number of sheets?
+            "meta:cell-count": "0",  # TODO: Number of cells
+            "meta:object-count": "0",
+        })
         return self.parse_element(root)
 
     @property
@@ -185,16 +190,16 @@ class Calc:
             for name, uri in self.ns.items():
                 ET.register_namespace(name, uri)
 
-        # body = ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True)
-        # print(body.decode("utf-8"))
-        # body = ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True)
-        # print(body.decode("utf-8"))
-        # body = ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True)
-        # print(body.decode("utf-8"))
-        # body = ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True)
-        # print(body.decode("utf-8"))
-        # body = ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True)
-        # print(body.decode("utf-8"))
+        body = ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True)
+        print(body.decode("utf-8"))
+        body = ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True)
+        print(body.decode("utf-8"))
+        body = ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True)
+        print(body.decode("utf-8"))
+        body = ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True)
+        print(body.decode("utf-8"))
+        body = ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True)
+        print(body.decode("utf-8"))
 
         localtime = time.localtime()[:6]
         handle = zipfile.ZipFile(filename, "w")
