@@ -28,7 +28,7 @@ class Spreadsheet(BaseMixin):
         # ET.SubElement(table, 'table:table-row')
         return self.parse_element(root)
 
-    def debug_cells(self):
+    def debug_cells(self) -> None:
         """Debug cells."""
         root = self.get_or_create_root()
         table = root.find(".//table:table", self.ns)

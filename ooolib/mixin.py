@@ -4,10 +4,12 @@ from io import BytesIO
 from typing import Callable
 from xml.etree.ElementTree import Element
 
+localtimeType = tuple[int, int, int, int, int, int]
+
 
 class MainMixin:
 
-    def write_content(self, handle, localtime, filename, content) -> None:
+    def write_content(self, handle: zipfile.ZipFile, localtime: localtimeType, filename: str, content: bytes) -> None:
         info = zipfile.ZipInfo(filename)
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
@@ -42,12 +44,12 @@ class BaseMixin(MainMixin):
             self.root = self.create()
         return self.root
 
-    def read(self, handle):
+    def read(self, handle: zipfile.ZipFile) -> None:
         """Read content from handle."""
         doc = ET.parse(BytesIO(handle.read(self.filename)))
         self.root = doc.getroot()
 
-    def write(self, handle, localtime) -> None:
+    def write(self, handle: zipfile.ZipFile, localtime: localtimeType) -> None:
         """Write content into the handle."""
         self.write_content(
             handle,
