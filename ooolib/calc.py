@@ -213,31 +213,31 @@ class Calc:
         info = zipfile.ZipInfo("META-INF/manifest.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        # handle.writestr(info, ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True))
-        handle.writestr(info, open("ooolib/template/META-INF/manifest.xml").read())
+        handle.writestr(info, ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, open("ooolib/template/META-INF/manifest.xml").read())
 
-        info = zipfile.ZipInfo("manifest.rdf")
-        info.date_time = localtime
-        info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, open("ooolib/template/manifest.rdf").read())
+        # info = zipfile.ZipInfo("manifest.rdf")
+        # info.date_time = localtime
+        # info.compress_type = zipfile.ZIP_DEFLATED
+        # handle.writestr(info, open("ooolib/template/manifest.rdf").read())
 
         info = zipfile.ZipInfo("settings.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        # handle.writestr(info, ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True))
-        handle.writestr(info, open("ooolib/template/settings.xml").read())
+        handle.writestr(info, ET.tostring(self.section_settings, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, open("ooolib/template/settings.xml").read())
 
         info = zipfile.ZipInfo("styles.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        # handle.writestr(info, ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True))
-        handle.writestr(info, open("ooolib/template/styles.xml").read())
+        handle.writestr(info, ET.tostring(self.section_styles, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, open("ooolib/template/styles.xml").read())
 
         info = zipfile.ZipInfo("content.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        # handle.writestr(info, ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True))
-        handle.writestr(info, open("ooolib/template/content.xml").read())
+        handle.writestr(info, ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, open("ooolib/template/content.xml").read())
 
         handle.close()
 
@@ -245,4 +245,4 @@ class Calc:
 if __name__ == "__main__":
     calc = Calc()
     # calc.load('ooolib/template/meta-f.xml')
-    calc.save("test-23.ods")
+    calc.save("test-27.ods")
