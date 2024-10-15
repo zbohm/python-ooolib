@@ -16,6 +16,8 @@ class Calc:
         "meta": "urn:oasis:names:tc:opendocument:xmlns:meta:1.0",
         "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
         "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+        "style": "urn:oasis:names:tc:opendocument:xmlns:style:1.0",
+        "fo": "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0",
     }
     encoding = "utf-8"
 
@@ -93,13 +95,46 @@ class Calc:
         root = ET.Element('office:document-content', {
             "xmlns:office": self.ns["office"],
             "xmlns:table": self.ns["table"],
+            "xmlns:style": self.ns["style"],
+            "xmlns:fo": self.ns["fo"],
             "office:version": self.version,
         })
+        automatic_styles = ET.SubElement(root, 'office:automatic-styles')
+        # Column
+        style = ET.SubElement(automatic_styles, 'style:style', {
+            "style:name": "co1",
+            "style:family": "table-column",
+        })
+        ET.SubElement(style, 'style:table-column-properties', {
+             "style:column-width": "2.258cm",
+            "fo:break-before": "auto",
+        })
+        # Row
+        style = ET.SubElement(automatic_styles, 'style:style', {
+            "style:name": "ro1",
+            "style:family": "table-row",
+        })
+        ET.SubElement(style, 'style:table-row-properties', {
+            "style:row-height": "0.452cm" ,
+            "style:use-optimal-row-height": "true",
+            "fo:break-before": "auto",
+        })
+        # Table
+        style = ET.SubElement(automatic_styles, 'style:style', {
+            "style:name": "ta1",
+            "style:family": "table",
+            "style:master-page-name": "Default",
+        })
+        ET.SubElement(style, 'style:table-properties', {
+            "table:display": "true",
+            "style:writing-mode": "lr-tb",
+        })
+
         body = ET.SubElement(root, 'office:body')
         sheet = ET.SubElement(body, 'office:spreadsheet')
-        table = ET.SubElement(sheet, 'table:table', {"table:name": "List1"})
-        ET.SubElement(table, 'table:table-column', {"table:default-cell-style": "Default"})
-        row = ET.SubElement(table, 'table:table-row')
+        table = ET.SubElement(sheet, 'table:table', {"table:name": "List1", "table:style-name": "ta1"})
+        ET.SubElement(table, 'table:table-column', {"table:style-name": "co1", "table:default-cell-style": "Default"})
+        row = ET.SubElement(table, 'table:table-row', {"table:style-name": "ro1"})
         ET.SubElement(row, 'table:table-cell')
         return self.parse_element(root)
 
