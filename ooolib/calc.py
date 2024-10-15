@@ -18,6 +18,7 @@ class Calc:
         "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
         "style": "urn:oasis:names:tc:opendocument:xmlns:style:1.0",
         "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
+        "calcext": "urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0",
     }
     encoding = "utf-8"
 
@@ -95,6 +96,8 @@ class Calc:
         root = ET.Element('office:document-content', {
             "xmlns:office": self.ns["office"],
             "xmlns:table": self.ns["table"],
+            "xmlns:text": self.ns["text"],
+            "xmlns:calcext": self.ns["calcext"],
             # "xmlns:style": self.ns["style"],
             # "xmlns:fo": self.ns["fo"],
             "office:version": self.version,
@@ -144,7 +147,35 @@ class Calc:
         table = ET.SubElement(sheet, 'table:table', {"table:name": "List1"})
         ET.SubElement(table, 'table:table-column')
         row = ET.SubElement(table, 'table:table-row')
-        ET.SubElement(row, 'table:table-cell')
+
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "float",
+            "office:value": "1",
+            "calcext:value-type": "float",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "1"
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "float",
+            "office:value": "2",
+            "calcext:value-type": "float",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "2"
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "float",
+            "office:value": "3",
+            "calcext:value-type": "float",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "3"
+
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "string",
+            "calcext:value-type": "string",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "Matěj"
 
         return self.parse_element(root)
 
@@ -255,4 +286,4 @@ class Calc:
 if __name__ == "__main__":
     calc = Calc()
     # calc.load('ooolib/template/meta-f.xml')
-    calc.save("test-30.ods")
+    calc.save("test-32.ods")
