@@ -214,6 +214,11 @@ class Calc:
         info.compress_type = zipfile.ZIP_DEFLATED
         handle.writestr(info, ET.tostring(self.section_manifest, encoding='utf-8', xml_declaration=True))
 
+        info = zipfile.ZipInfo("manifest.rdf")
+        info.date_time = localtime
+        info.compress_type = zipfile.ZIP_DEFLATED
+        handle.writestr(info, open("ooolib/template/manifest.rdf").read())
+
         info = zipfile.ZipInfo("settings.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
