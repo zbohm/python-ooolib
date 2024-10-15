@@ -4,8 +4,6 @@ from xml.etree.ElementTree import Element
 
 from .mixin import BaseMixin
 
-VERSION = "1.0.0"
-
 
 class Meta(BaseMixin):
 
@@ -24,7 +22,8 @@ class Meta(BaseMixin):
         meta = ET.SubElement(root, 'office:meta')
         creation_date = ET.SubElement(meta, 'meta:creation-date')
         creation_date.text = datetime.now().isoformat()
-        ET.SubElement(meta, 'meta:generator', text=f'ooolib-python=={VERSION}')
+        version = self.get_version()
+        ET.SubElement(meta, 'meta:generator', text=f'ooolib-python=={version}')
         return self.parse_element(root)
 
     def get_or_create_root(self) -> Element:
