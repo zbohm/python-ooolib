@@ -244,33 +244,33 @@ class Calc:
         # handle.writestr(info, ET.tostring(self.section_content, encoding='utf-8', xml_declaration=True))
         handle.writestr(info, open("ooolib/template/content.xml").read())
 
-        info = zipfile.ZipInfo('Configurations2/accelerator/current.xml', date_time=localtime)
-        handle.writestr(info, b"")
-        # for name in (
-        #     "accelerator",
-        #     "floater",
-        #     "images",
-        #     "menubar",
-        #     "popupmenu",
-        #     "progressbar",
-        #     "statusbar",
-        #     "toolbar",
-        #     "toolpanel",
-        # ):
-        #     handle.mkdir(f'Configurations2/{name}', mode=511)
+        # info = zipfile.ZipInfo('Configurations2/accelerator/current.xml', date_time=localtime)
+        # handle.writestr(info, b"")
 
-            # info = zipfile.ZipInfo(f'Configurations2/{name}', date_time=localtime)
-            # handle.writestr(info, b"")
-            # info = zipfile.ZipInfo(f'Configurations2/{name}')
-            # # info.compress_type = zipfile.ZIP_DEFLATED
-            # handle.writestr(info, b"")
+        for name in (
+            "accelerator",
+            "floater",
+            "images",
+            "menubar",
+            "popupmenu",
+            "progressbar",
+            "statusbar",
+            "toolbar",
+            "toolpanel",
+        ):
+            handle.mkdir(f'Configurations2/{name}')  #, mode=511)
+        #     info = zipfile.ZipInfo(f'Configurations2/{name}/DUMMY', date_time=localtime)
+        #     handle.writestr(info, br"ZipFile.mkdir Added in version 3.11.\n")
+        #     # info = zipfile.ZipInfo(f'Configurations2/{name}')
+        #     # # info.compress_type = zipfile.ZIP_DEFLATED
+        #     # handle.writestr(info, b"")
 
-        info = zipfile.ZipInfo(f'Configurations2/images/Bitmaps', date_time=localtime)
-        handle.writestr(info, b"")
+        # info = zipfile.ZipInfo(f'Configurations2/images/Bitmaps', date_time=localtime)
+        # handle.writestr(info, b"")
 
-        info = zipfile.ZipInfo('Thumbnails/thumbnail.png', date_time=localtime)
-        info.compress_type = zipfile.ZIP_DEFLATED
-        handle.writestr(info, open("ooolib/template/Thumbnails/thumbnail.png", "rb").read())
+        # info = zipfile.ZipInfo('Thumbnails/thumbnail.png', date_time=localtime)
+        # info.compress_type = zipfile.ZIP_DEFLATED
+        # handle.writestr(info, open("ooolib/template/Thumbnails/thumbnail.png", "rb").read())
 
         handle.close()
 
@@ -278,4 +278,4 @@ class Calc:
 if __name__ == "__main__":
     calc = Calc()
     # calc.load('ooolib/template/meta-f.xml')
-    calc.save("test-11.ods")
+    calc.save("test-18.ods")
