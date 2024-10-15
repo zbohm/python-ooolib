@@ -30,7 +30,8 @@ class Spreadsheet(BaseMixin):
 
     def debug_cells(self):
         """Debug cells."""
-        table = self.root.find(".//table:table", self.ns)
+        root = self.get_or_create_root()
+        table = root.find(".//table:table", self.ns)
         row = ET.SubElement(table, 'table:table-row')
         cell = ET.SubElement(row, 'table:table-cell', {
             "office:value-type": "float",

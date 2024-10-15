@@ -36,8 +36,7 @@ class BaseMixin(MainMixin):
         doc = ET.parse(BytesIO(ET.tostring(element, encoding=self.encoding)))
         return doc.getroot()
 
-    @property
-    def section(self) -> Element:
+    def get_or_create_root(self) -> Element:
         """Get or create section."""
         if self.root is None:
             self.root = self.create()
@@ -54,5 +53,5 @@ class BaseMixin(MainMixin):
             handle,
             localtime,
             self.filename,
-            ET.tostring(self.section, encoding='utf-8', xml_declaration=True)
+            ET.tostring(self.get_or_create_root(), encoding='utf-8', xml_declaration=True)
         )

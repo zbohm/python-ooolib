@@ -27,8 +27,7 @@ class Meta(BaseMixin):
         ET.SubElement(meta, 'meta:generator', text=f'ooolib-python=={VERSION}')
         return self.parse_element(root)
 
-    @property
-    def section(self) -> Element:
+    def get_or_create_root(self) -> Element:
         """Build meta."""
         if self.root is None:
             self.root = self.create()
