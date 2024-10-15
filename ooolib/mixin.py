@@ -10,6 +10,7 @@ localtimeType = tuple[int, int, int, int, int, int]
 class MainMixin:
 
     def write_content(self, handle: zipfile.ZipFile, localtime: localtimeType, filename: str, content: bytes) -> None:
+        """Write content."""
         info = zipfile.ZipInfo(filename)
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
@@ -28,6 +29,7 @@ class BaseMixin(MainMixin):
         "style": "urn:oasis:names:tc:opendocument:xmlns:style:1.0",
         "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
         "calcext": "urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0",
+        "manifest": "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0",
     }
     root: Element
     create: Callable

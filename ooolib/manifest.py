@@ -13,11 +13,8 @@ class Manifest(BaseMixin):
 
     def create(self) -> Element:
         """Create manifest."""
-        ns = {
-            "manifest": "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0",
-        }
         root = ET.Element('manifest:manifest', {
-            "xmlns:manifest": ns["manifest"],
+            "xmlns:manifest": self.ns["manifest"],
             "manifest:version": self.version,
         })
         ET.SubElement(root, "manifest:file-entry", {

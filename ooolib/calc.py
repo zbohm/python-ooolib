@@ -44,7 +44,7 @@ class Calc(MainMixin):
         handle = zipfile.ZipFile(filename, "w")
         try:
             self.meta.write(handle, localtime)
-            self.write_content(handle, localtime, "mimetype", self.sheet.mimetype)
+            self.write_content(handle, localtime, "mimetype", self.sheet.mimetype.encode())
             self.manifest.write(handle, localtime)
             self.settings.write(handle, localtime)
             self.styles.write(handle, localtime)
