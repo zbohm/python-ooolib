@@ -45,11 +45,6 @@ class Calc:
         creation_date = ET.SubElement(meta, 'meta:creation-date')
         creation_date.text = datetime.now().isoformat()
         ET.SubElement(meta, 'meta:generator', text=f'ooolib-python=={VERSION}')
-        ET.SubElement(meta, 'document-statistic', {
-            "meta:table-count": "1",  # TODO: Number of sheets?
-            "meta:cell-count": "0",  # TODO: Number of cells
-            "meta:object-count": "0",
-        })
         return self.parse_element(root)
 
     @property
@@ -207,8 +202,8 @@ class Calc:
         info = zipfile.ZipInfo("meta.xml")
         info.date_time = localtime
         info.compress_type = zipfile.ZIP_DEFLATED
-        # handle.writestr(info, ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True))
-        handle.writestr(info, open("ooolib/template/meta.xml").read())
+        handle.writestr(info, ET.tostring(self.section_meta, encoding='utf-8', xml_declaration=True))
+        # handle.writestr(info, open("ooolib/template/meta.xml").read())
 
         info = zipfile.ZipInfo("mimetype")
         info.date_time = localtime
@@ -259,11 +254,6 @@ class Calc:
             "toolpanel",
         ):
             handle.mkdir(f'Configurations2/{name}')  #, mode=511)
-        #     info = zipfile.ZipInfo(f'Configurations2/{name}/DUMMY', date_time=localtime)
-        #     handle.writestr(info, br"ZipFile.mkdir Added in version 3.11.\n")
-        #     # info = zipfile.ZipInfo(f'Configurations2/{name}')
-        #     # # info.compress_type = zipfile.ZIP_DEFLATED
-        #     # handle.writestr(info, b"")
 
         # info = zipfile.ZipInfo(f'Configurations2/images/Bitmaps', date_time=localtime)
         # handle.writestr(info, b"")
@@ -278,4 +268,4 @@ class Calc:
 if __name__ == "__main__":
     calc = Calc()
     # calc.load('ooolib/template/meta-f.xml')
-    calc.save("test-18.ods")
+    calc.save("test-20.ods")
