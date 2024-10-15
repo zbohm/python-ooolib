@@ -1,0 +1,14 @@
+https://github.com/josephcolton/ooolib-python/
+
+
+xmllint --format --encode utf8 content.xml > content-f.xml 
+xmllint --format --encode utf8 meta.xml > meta-f.xml 
+xmllint --format --encode utf8 settings.xml > settings-f.xml 
+xmllint --format --encode utf8 styles.xml > styles-f.xml
+
+
+https://docs.oasis-open.org/office/v1.2/cs01/OpenDocument-v1.2-cs01-part1.html
+
+https://help.libreoffice.org/latest/cs/text/sbasic/python/python_examples.html?DbPAR=BASIC
+https://help.libreoffice.org/latest/cs/text/sbasic/guide/read_write_values.html?&DbPAR=BASIC&System=UNIX
+
