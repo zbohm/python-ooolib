@@ -3,5 +3,5 @@ from ooolib.calc import Calc
 
 
 calc = Calc()
-# calc.load("test-02.ods")
-calc.save("test-02-out.ods")
+# calc.load("test-01.ods")
+calc.save("test-01-out.ods")

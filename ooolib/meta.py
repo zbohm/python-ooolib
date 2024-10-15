@@ -17,6 +17,7 @@ class Meta(BaseMixin):
         root = ET.Element('office:document-meta', {
             "xmlns:office": self.ns["office"],
             "xmlns:meta": self.ns["meta"],
+            "xmlns:dc": self.ns["dc"],
             "office:version": self.version,
         })
         meta = ET.SubElement(root, 'office:meta')
@@ -31,7 +32,7 @@ class Meta(BaseMixin):
         if self.root is None:
             self.root = self.create()
         else:
-            creation_date = self.root.find("office:meta/meta:creation-date", self.ns)
-            if creation_date is not None:
-                creation_date.text = datetime.now().isoformat()
+            self.set_value("office:meta/dc:date", datetime.now().isoformat())
+            # self.set_value("office:meta/meta:editing-cycles", "2")
+            # self.set_value("office:meta/meta:editing-duration", "PT38S")
         return self.root

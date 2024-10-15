@@ -36,6 +36,7 @@ class BaseMixin(MainMixin):
         "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
         "calcext": "urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0",
         "manifest": "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0",
+        "dc": "http://purl.org/dc/elements/1.1/",
     }
     root: Element
     create: Callable
@@ -65,3 +66,12 @@ class BaseMixin(MainMixin):
             self.filename,
             ET.tostring(self.get_or_create_root(), encoding='utf-8', xml_declaration=True)
         )
+
+    def set_value(self, xpath: str, value: str) -> None:
+        """Set value to the xpath."""
+        element = self.root.find(xpath, self.ns)
+        if element is None:
+            ancestor, name = xpath.rsplit('/', 1)
+            parent = self.root.find(ancestor, self.ns)
+            element = ET.SubElement(parent, name)
+        element.text = value
