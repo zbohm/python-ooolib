@@ -13,11 +13,11 @@ class Calc:
 
     ns = {
         "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
+        "fo": "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0",
         "meta": "urn:oasis:names:tc:opendocument:xmlns:meta:1.0",
-        "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
         "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
         "style": "urn:oasis:names:tc:opendocument:xmlns:style:1.0",
-        "fo": "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0",
+        "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
     }
     encoding = "utf-8"
 
@@ -44,7 +44,7 @@ class Calc:
         meta = ET.SubElement(root, 'office:meta')
         creation_date = ET.SubElement(meta, 'meta:creation-date')
         creation_date.text = datetime.now().isoformat()
-        ET.SubElement(meta, 'meta:generator', text=f'python-ooolib=={VERSION}')
+        ET.SubElement(meta, 'meta:generator', text=f'ooolib-python=={VERSION}')
         return self.parse_element(root)
 
     @property
