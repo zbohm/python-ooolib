@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
-from .mixin import RootMixin
+from .mixin import OpenDocumentMixin
 
 
-class Manifest(RootMixin):
+class Manifest(OpenDocumentMixin):
 
     filename = "META-INF/manifest.xml"
 

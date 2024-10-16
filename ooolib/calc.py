@@ -2,6 +2,11 @@ import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
 from .content import Content
+from .mixin import RootMixin
+
+
+class Spreadsheet(RootMixin):
+    """Calc Spreadsheet."""
 
 
 class Sheet(Content):
@@ -31,6 +36,14 @@ class Sheet(Content):
     def create_sheet(self, name: str = None) -> Element:
         """Create sheet."""
         return self.create_default_sheet(self.get_or_create_root(), name)
+
+    def get_sheet(self, position: int = 0) -> Spreadsheet:
+        """Get sheet."""
+        root = self.get_or_create_root()
+        sheets = root.findall("office:body/office:spreadsheet", self.ns)
+        sheet = Spreadsheet()
+        sheet.root = sheets[position]
+        return sheet
 
     def debug_cells(self) -> None:
         """Debug cells."""

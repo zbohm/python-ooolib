@@ -17,7 +17,27 @@ class BaseMixin:
         handle.writestr(info, content)
 
 
-class RootMixin(BaseMixin):
+class RootMixin:
+
+    def __init__(self):
+        self.root: Element = None
+
+    def qualify(self, prefied_name: str) -> str:
+        """Create qualified xml element name."""
+        prefix, name = prefied_name.split(":")
+        return f"{{{self.ns[prefix]}}}{name}"
+
+    def set_value(self, xpath: str, value: str) -> None:
+        """Set value to the xpath."""
+        element = self.root.find(xpath, self.ns)
+        if element is None:
+            ancestor, name = xpath.rsplit('/', 1)
+            parent = self.root.find(ancestor, self.ns)
+            element = ET.SubElement(self.qualify(parent), self.qualify(name))
+        element.text = value
+
+
+class OpenDocumentMixin(BaseMixin, RootMixin):
 
     version = "1.2"
     encoding = "utf-8"
@@ -37,13 +57,8 @@ class RootMixin(BaseMixin):
     filename: str
 
     def __init__(self, document: "ooolib.document.OpenDocument"):
+        super().__init__()
         self.document = document
-        self.root: Element = None
-
-    def qualify(self, prefied_name: str) -> str:
-        """Create qualified xml element name."""
-        prefix, name = prefied_name.split(":")
-        return f"{{{self.ns[prefix]}}}{name}"
 
     def get_or_create_root(self) -> Element:
         """Get or create section."""
@@ -64,12 +79,3 @@ class RootMixin(BaseMixin):
             self.filename,
             ET.tostring(self.get_or_create_root(), encoding='utf-8', xml_declaration=True)
         )
-
-    def set_value(self, xpath: str, value: str) -> None:
-        """Set value to the xpath."""
-        element = self.root.find(xpath, self.ns)
-        if element is None:
-            ancestor, name = xpath.rsplit('/', 1)
-            parent = self.root.find(ancestor, self.ns)
-            element = ET.SubElement(self.qualify(parent), self.qualify(name))
-        element.text = value

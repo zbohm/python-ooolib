@@ -3,4 +3,7 @@ from ooolib.document import Calc
 
 calc = Calc()
 # calc.load("test-01.ods")
-calc.save("test-09-out.ods")
+# calc.save("test-10-out.ods")
+
+sheet = calc.content.get_sheet()
+print("sheet:", sheet)

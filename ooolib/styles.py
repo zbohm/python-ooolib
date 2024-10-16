@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
-from .mixin import RootMixin
+from .mixin import OpenDocumentMixin
 
 
-class Styles(RootMixin):
+class Styles(OpenDocumentMixin):
 
     filename = "styles.xml"
 
