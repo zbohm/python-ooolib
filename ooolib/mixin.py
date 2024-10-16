@@ -1,6 +1,5 @@
-import os
-import zipfile
 import xml.etree.ElementTree as ET
+import zipfile
 from io import BytesIO
 from typing import Callable
 from xml.etree.ElementTree import Element
@@ -9,11 +8,6 @@ localtimeType = tuple[int, int, int, int, int, int]  # year, month, day, hour, m
 
 
 class BaseMixin:
-
-    def get_version(self) -> str:
-        """Get project version."""
-        filepath = os.path.join(os.path.dirname(__file__), "VERSION")
-        return open(filepath).read().strip()
 
     def write_content(self, handle: zipfile.ZipFile, localtime: localtimeType, filename: str, content: bytes) -> None:
         """Write content."""
