@@ -8,6 +8,10 @@ from .mixin import RootMixin
 class Spreadsheet(RootMixin):
     """Calc Spreadsheet."""
 
+    def __init__(self, sheet: Element) -> None:
+        super().__init__()
+        self.root = sheet
+
 
 class Sheet(Content):
 
@@ -33,22 +37,20 @@ class Sheet(Content):
         ET.SubElement(sheet, self.qualify('table:table'), {"table:name": name})
         return sheet
 
-    def create_sheet(self, name: str = None) -> Element:
+    def create_sheet(self, name: str = None) -> Spreadsheet:
         """Create sheet."""
-        return self.create_default_sheet(self.get_or_create_root(), name)
+        return Spreadsheet(self.create_default_sheet(self.get_or_create_root(), name))
 
     def get_sheet(self, position: int = 0) -> Spreadsheet:
         """Get sheet."""
         root = self.get_or_create_root()
         sheets = root.findall("office:body/office:spreadsheet", self.ns)
-        sheet = Spreadsheet()
-        sheet.root = sheets[position]
-        return sheet
+        return Spreadsheet(sheets[position])
 
     def debug_cells(self) -> None:
         """Debug cells."""
         sheet = self.create_sheet()
-        table = sheet.find("table:table", self.ns)
+        table = sheet.root.find("table:table", self.ns)
         row = ET.SubElement(table, self.qualify('table:table-row'))
         cell = ET.SubElement(row, self.qualify('table:table-cell'), {
             "office:value-type": "float",
