@@ -1,0 +1,60 @@
+<office:document-content>
+  <office:scripts/>
+  <office:font-face-decls>
+    <style:font-face style:name="Liberation Sans" svg:font-family="'Liberation Sans'" style:font-family-generic="swiss" style:font-pitch="variable"/>
+    <style:font-face style:name="Lohit Devanagari" svg:font-family="'Lohit Devanagari'" style:font-family-generic="system" style:font-pitch="variable"/>
+    <style:font-face style:name="Noto Sans CJK SC" svg:font-family="'Noto Sans CJK SC'" style:font-family-generic="system" style:font-pitch="variable"/>
+  </office:font-face-decls>
+  <office:automatic-styles>
+    <style:style style:name="co1" style:family="table-column">
+      <style:table-column-properties fo:break-before="auto" style:column-width="2.258cm"/>
+    </style:style>
+    <style:style style:name="ro1" style:family="table-row">
+      <style:table-row-properties style:row-height="0.452cm" fo:break-before="auto" style:use-optimal-row-height="true"/>
+    </style:style>
+    <style:style style:name="ta1" style:family="table" style:master-page-name="Default">
+      <style:table-properties table:display="true" style:writing-mode="lr-tb"/>
+    </style:style>
+  </office:automatic-styles>
+  <office:body>
+    <office:spreadsheet>
+      <table:calculation-settings table:automatic-find-labels="false" table:use-regular-expressions="false" table:use-wildcards="true"/>
+      <table:table table:name="List1" table:style-name="ta1">
+        <table:table-column table:style-name="co1" table:number-columns-repeated="9" table:default-cell-style-name="Default"/>
+        <table:table-row table:style-name="ro1">
+          <table:table-cell office:value-type="string" calcext:value-type="string">
+            <text:p>A1</text:p>
+          </table:table-cell>
+          <table:table-cell table:number-columns-repeated="8"/>
+        </table:table-row>
+        <table:table-row table:style-name="ro1">
+          <table:table-cell/>
+          <table:table-cell office:value-type="string" calcext:value-type="string">
+            <text:p>B2</text:p>
+          </table:table-cell>
+          <table:table-cell table:number-columns-repeated="7"/>
+        </table:table-row>
+        <table:table-row table:style-name="ro1" table:number-rows-repeated="2">
+          <table:table-cell table:number-columns-repeated="9"/>
+        </table:table-row>
+        <table:table-row table:style-name="ro1">
+          <table:table-cell table:number-columns-repeated="4"/>
+          <table:table-cell office:value-type="string" calcext:value-type="string">
+            <text:p>E5</text:p>
+          </table:table-cell>
+          <table:table-cell table:number-columns-repeated="4"/>
+        </table:table-row>
+        <table:table-row table:style-name="ro1" table:number-rows-repeated="14">
+          <table:table-cell table:number-columns-repeated="9"/>
+        </table:table-row>
+        <table:table-row table:style-name="ro1">
+          <table:table-cell table:number-columns-repeated="8"/>
+          <table:table-cell office:value-type="string" calcext:value-type="string">
+            <text:p>Iva 20</text:p>
+          </table:table-cell>
+        </table:table-row>
+      </table:table>
+      <table:named-expressions/>
+    </office:spreadsheet>
+  </office:body>
+</office:document-content>

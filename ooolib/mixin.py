@@ -22,9 +22,9 @@ class RootMixin:
     def __init__(self):
         self.root: Element = None
 
-    def qualify(self, prefied_name: str) -> str:
+    def qualify(self, prefix_and_name: str) -> str:
         """Create qualified xml element name."""
-        prefix, name = prefied_name.split(":")
+        prefix, name = prefix_and_name.split(":")
         return f"{{{self.ns[prefix]}}}{name}"
 
     def set_value(self, xpath: str, value: str) -> None:

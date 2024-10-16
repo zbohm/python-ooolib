@@ -75,6 +75,9 @@ class Calc(OpenDocument):
         self.content.debug_cells()
         super().save(filename)
 
+    def get_sheet(self, position: int = 0) -> Sheet:
+        return self.content.get_sheet(position)
+
 
 class Write(OpenDocument):
     """LibreOffice Write."""

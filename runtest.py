@@ -5,5 +5,5 @@ calc = Calc()
 # calc.load("test-01.ods")
 # calc.save("test-10-out.ods")
 
-sheet = calc.content.get_sheet()
+sheet = calc.get_sheet()
 print("sheet:", sheet)
