@@ -2,15 +2,7 @@ import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
 from .content import Content
-from .mixin import RootMixin
-
-
-class Spreadsheet(RootMixin):
-    """Calc Spreadsheet."""
-
-    def __init__(self, sheet: Element) -> None:
-        super().__init__()
-        self.root = sheet
+from .spreadsheet import Spreadsheet
 
 
 class Sheet(Content):

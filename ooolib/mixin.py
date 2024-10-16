@@ -19,7 +19,19 @@ class BaseMixin:
 
 class RootMixin:
 
-    ns: dict[str, str]
+    version = "1.2"
+    encoding = "utf-8"
+    ns = {
+        "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
+        "fo": "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0",
+        "meta": "urn:oasis:names:tc:opendocument:xmlns:meta:1.0",
+        "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+        "style": "urn:oasis:names:tc:opendocument:xmlns:style:1.0",
+        "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
+        "calcext": "urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0",
+        "manifest": "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0",
+        "dc": "http://purl.org/dc/elements/1.1/",
+    }
 
     def __init__(self):
         self.root: Element = None
@@ -41,20 +53,6 @@ class RootMixin:
 
 class OpenDocumentMixin(BaseMixin, RootMixin):
 
-    version = "1.2"
-    encoding = "utf-8"
-    ns = {
-        "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
-        "fo": "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0",
-        "meta": "urn:oasis:names:tc:opendocument:xmlns:meta:1.0",
-        "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
-        "style": "urn:oasis:names:tc:opendocument:xmlns:style:1.0",
-        "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
-        "calcext": "urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0",
-        "manifest": "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0",
-        "dc": "http://purl.org/dc/elements/1.1/",
-    }
-    root: Element
     create: Callable
     filename: str
 
