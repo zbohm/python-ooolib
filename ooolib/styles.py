@@ -1,15 +1,12 @@
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
-from .mixin import BaseMixin
+from .mixin import RootMixin
 
 
-class Styles(BaseMixin):
+class Styles(RootMixin):
 
     filename = "styles.xml"
-
-    def __init__(self):
-        self.root: Element = None
 
     def create(self) -> Element:
         """Create styles."""

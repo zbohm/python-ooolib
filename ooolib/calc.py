@@ -1,15 +1,12 @@
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
-from .mixin import BaseMixin
+from .mixin import RootMixin
 
 
-class Calc(BaseMixin):
+class Calc(RootMixin):
 
     filename = "content.xml"
-
-    def __init__(self):
-        self.root: Element = None
 
     def create(self) -> Element:
         """Create content."""

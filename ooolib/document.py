@@ -5,22 +5,22 @@ import zipfile
 from .content import Content
 from .manifest import Manifest
 from .meta import Meta
-from .mixin import MainMixin
+from .mixin import BaseMixin
 from .settings import Settings
 from .styles import Styles
 
 
-class OpenDocument(MainMixin):
+class OpenDocument(BaseMixin):
     """LibreOffice document."""
 
     mimetype: str
 
     def __init__(self):
-        self.manifest = Manifest()
-        self.meta = Meta()
-        self.settings = Settings()
-        self.styles = Styles()
-        self.content = Content()
+        self.manifest = Manifest(self)
+        self.meta = Meta(self)
+        self.settings = Settings(self)
+        self.styles = Styles(self)
+        self.content = Content(self)
 
     def load(self, filename: str) -> None:
         """Load document from filename."""

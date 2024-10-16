@@ -8,7 +8,7 @@ from xml.etree.ElementTree import Element
 localtimeType = tuple[int, int, int, int, int, int]  # year, month, day, hour, min, sec
 
 
-class MainMixin:
+class BaseMixin:
 
     def get_version(self) -> str:
         """Get project version."""
@@ -23,7 +23,7 @@ class MainMixin:
         handle.writestr(info, content)
 
 
-class BaseMixin(MainMixin):
+class RootMixin(BaseMixin):
 
     version = "1.2"
     encoding = "utf-8"
@@ -41,6 +41,10 @@ class BaseMixin(MainMixin):
     root: Element
     create: Callable
     filename: str
+
+    def __init__(self, document: "OpenDocument"):
+        self.document = document
+        self.root: Element = None
 
     def parse_element(self, element: Element) -> Element:
         """Parse element."""
