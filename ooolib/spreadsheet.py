@@ -38,7 +38,11 @@ class Spreadsheet(RootMixin):
                 for cell in row.findall("table:table-cell", self.ns):
                     repeated = cell.get(self.qualify("table:number-columns-repeated"))
                     if repeated is None:
-                        columns += 1
+                        spanned = cell.get(self.qualify("table:number-columns-spanned"))
+                        if spanned is None:
+                            columns += 1
+                        else:
+                            columns += int(spanned)
                     else:
                         columns += int(repeated)
         return rows, columns
@@ -88,7 +92,7 @@ class Spreadsheet(RootMixin):
    +-------+-------+
 4  |       |    (a)|
    +-------+-------+-------+-------+-------+
-5  |       |       |               |   E5  |
+5  |       |       |  TU           |   E5  |
    +-------+-------+-------+-------+-------+
 6  |       |       |       |       |       |
    +-------+-------+-------+-------+-------+
@@ -96,7 +100,7 @@ class Spreadsheet(RootMixin):
    +-------+-------+               +-------+
 8  |       |       |               |       |
    +-------+-------+               +-------+
-9  |       |       |               |       |
+9  |       |       |  SOM          |       |
    +-------+-------+-------+-------+-------+-------+
 10 | http..|       |       |       |       |  F10  |
    +-------+-------+-------+-------+-------+-------+
