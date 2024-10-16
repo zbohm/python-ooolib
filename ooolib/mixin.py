@@ -36,7 +36,7 @@ class RootMixin(BaseMixin):
     create: Callable
     filename: str
 
-    def __init__(self, document: "OpenDocument"):
+    def __init__(self, document: "ooolib.document.OpenDocument"):
         self.document = document
         self.root: Element = None
 

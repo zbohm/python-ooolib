@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 from .content import Content
+from .exceptions import UnexpectedMimetype
 from .manifest import Manifest
 from .meta import Meta
 from .mixin import BaseMixin
@@ -26,6 +27,12 @@ class OpenDocument(BaseMixin):
         """Load document from filename."""
         handle = zipfile.ZipFile(filename)
         try:
+            mimetype = handle.read("mimetype").decode("utf-8")
+            if self.mimetype is None:
+                self.mimetype = mimetype
+            else:
+                if self.mimetype != mimetype:
+                    raise UnexpectedMimetype(mimetype)
             self.meta.read(handle)
             self.manifest.read(handle)
             self.settings.read(handle)

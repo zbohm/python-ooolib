@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element
 from .mixin import RootMixin
 
 
-class Calc(RootMixin):
+class Sheet(RootMixin):
 
     filename = "content.xml"
 
