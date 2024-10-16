@@ -2,6 +2,7 @@ import time
 import xml.etree.ElementTree as ET
 import zipfile
 
+from .calc import Sheet
 from .content import Content
 from .exceptions import UnexpectedMimetype
 from .manifest import Manifest
@@ -9,7 +10,6 @@ from .meta import Meta
 from .mixin import BaseMixin
 from .settings import Settings
 from .styles import Styles
-from .calc import Sheet
 from .write import Write
 
 
@@ -24,6 +24,9 @@ class OpenDocument(BaseMixin):
         self.settings = Settings(self)
         self.styles = Styles(self)
         self.content = Content(self)
+
+    def __getattr__(self, name):
+        return getattr(self.content, name)
 
     def load(self, filename: str) -> None:
         """Load document from filename."""
@@ -74,9 +77,6 @@ class Calc(OpenDocument):
     def save(self, filename: str) -> None:
         self.content.debug_cells()
         super().save(filename)
-
-    def get_sheet(self, position: int = 0) -> Sheet:
-        return self.content.get_sheet(position)
 
 
 class Write(OpenDocument):

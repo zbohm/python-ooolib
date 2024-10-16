@@ -19,6 +19,8 @@ class BaseMixin:
 
 class RootMixin:
 
+    ns: dict[str, str]
+
     def __init__(self):
         self.root: Element = None
 
@@ -27,11 +29,11 @@ class RootMixin:
         prefix, name = prefix_and_name.split(":")
         return f"{{{self.ns[prefix]}}}{name}"
 
-    def set_value(self, xpath: str, value: str) -> None:
-        """Set value to the xpath."""
-        element = self.root.find(xpath, self.ns)
+    def set_value(self, parent_and_name: str, value: str) -> None:
+        """Set value to the element of 'prefix:parent/prefix:name'."""
+        element = self.root.find(parent_and_name, self.ns)
         if element is None:
-            ancestor, name = xpath.rsplit('/', 1)
+            ancestor, name = parent_and_name.rsplit('/', 1)
             parent = self.root.find(ancestor, self.ns)
             element = ET.SubElement(self.qualify(parent), self.qualify(name))
         element.text = value
