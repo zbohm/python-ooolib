@@ -9,6 +9,8 @@ from .meta import Meta
 from .mixin import BaseMixin
 from .settings import Settings
 from .styles import Styles
+from .calc import Sheet
+from .write import Write
 
 
 class OpenDocument(BaseMixin):
@@ -47,8 +49,6 @@ class OpenDocument(BaseMixin):
             for name, uri in self.meta.ns.items():
                 ET.register_namespace(name, uri)
 
-        self.content.debug_cells()  # DEBUG
-
         localtime = time.localtime()[:6]
         handle = zipfile.ZipFile(filename, "w")
         try:
@@ -67,8 +67,20 @@ class Calc(OpenDocument):
 
     mimetype = "application/vnd.oasis.opendocument.spreadsheet"
 
+    def __init__(self):
+        super().__init__()
+        self.content = Sheet(self)
+
+    def save(self, filename: str) -> None:
+        self.content.debug_cells()
+        super().save(filename)
+
 
 class Write(OpenDocument):
     """LibreOffice Write."""
 
     mimetype = "application/vnd.oasis.opendocument.text"
+
+    def __init__(self):
+        super().__init__()
+        self.content = Write(self)

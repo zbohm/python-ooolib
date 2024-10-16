@@ -1,12 +1,10 @@
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
-from .mixin import RootMixin
+from .content import Content
 
 
-class Content(RootMixin):
-
-    filename = "content.xml"
+class Write(Content):
 
     def create(self) -> Element:
         """Create content."""
@@ -14,5 +12,6 @@ class Content(RootMixin):
             "xmlns:office": self.ns["office"],
             "office:version": self.version,
         })
-        ET.SubElement(root, 'office:body')
+        body = ET.SubElement(root, 'office:body')
+        ET.SubElement(body, 'office:text')
         return self.parse_element(root)

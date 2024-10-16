@@ -1,12 +1,12 @@
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
-from .mixin import RootMixin
+from .content import Content
 
 
-class Sheet(RootMixin):
+class Sheet(Content):
 
-    filename = "content.xml"
+    default_list_name = "List"
 
     def create(self) -> Element:
         """Create content."""
@@ -19,9 +19,7 @@ class Sheet(RootMixin):
         })
         body = ET.SubElement(root, 'office:body')
         sheet = ET.SubElement(body, 'office:spreadsheet')
-        ET.SubElement(sheet, 'table:table', {"table:name": "List1"})
-        # ET.SubElement(table, 'table:table-column')
-        # ET.SubElement(table, 'table:table-row')
+        ET.SubElement(sheet, 'table:table', {"table:name": f"{self.default_list_name}1"})
         return self.parse_element(root)
 
     def debug_cells(self) -> None:
