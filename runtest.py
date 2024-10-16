@@ -1,5 +1,5 @@
 #!/usr/bin/env python3.9
-from ooolib.calc import Calc
+from ooolib.document import Calc
 
 
 calc = Calc()

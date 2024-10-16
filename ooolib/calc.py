@@ -1,53 +1,62 @@
-import time
 import xml.etree.ElementTree as ET
-import zipfile
+from xml.etree.ElementTree import Element
 
-from .manifest import Manifest
-from .meta import Meta
-from .mixin import MainMixin
-from .settings import Settings
-from .spreadsheet import Spreadsheet
-from .styles import Styles
+from .mixin import BaseMixin
 
 
-class Calc(MainMixin):
-    """LibreOffice Calc."""
+class Calc(BaseMixin):
+
+    filename = "content.xml"
 
     def __init__(self):
-        self.manifest = Manifest()
-        self.meta = Meta()
-        self.settings = Settings()
-        self.styles = Styles()
-        self.sheet = Spreadsheet()
+        self.root: Element = None
 
-    def load(self, filename: str) -> None:
-        """Load document from filename."""
-        handle = zipfile.ZipFile(filename)
-        try:
-            self.meta.read(handle)
-            self.manifest.read(handle)
-            self.settings.read(handle)
-            self.styles.read(handle)
-            self.sheet.read(handle)
-        finally:
-            handle.close()
+    def create(self) -> Element:
+        """Create content."""
+        root = ET.Element('office:document-content', {
+            "xmlns:office": self.ns["office"],
+            "xmlns:table": self.ns["table"],
+            "xmlns:text": self.ns["text"],
+            "xmlns:calcext": self.ns["calcext"],
+            "office:version": self.version,
+        })
+        body = ET.SubElement(root, 'office:body')
+        sheet = ET.SubElement(body, 'office:spreadsheet')
+        ET.SubElement(sheet, 'table:table', {"table:name": "List1"})
+        # ET.SubElement(table, 'table:table-column')
+        # ET.SubElement(table, 'table:table-row')
+        return self.parse_element(root)
 
-    def save(self, filename: str) -> None:
-        """Save document into filename."""
-        if hasattr(ET, "register_namespace"):
-            for name, uri in self.meta.ns.items():
-                ET.register_namespace(name, uri)
+    def debug_cells(self) -> None:
+        """Debug cells."""
+        root = self.get_or_create_root()
+        table = root.find(".//table:table", self.ns)
+        row = ET.SubElement(table, 'table:table-row')
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "float",
+            "office:value": "1",
+            "calcext:value-type": "float",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "1"
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "float",
+            "office:value": "2",
+            "calcext:value-type": "float",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "2"
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "float",
+            "office:value": "3",
+            "calcext:value-type": "float",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "3"
 
-        self.sheet.debug_cells()  # DEBUG
-
-        localtime = time.localtime()[:6]
-        handle = zipfile.ZipFile(filename, "w")
-        try:
-            self.meta.write(handle, localtime)
-            self.write_content(handle, localtime, "mimetype", self.sheet.mimetype.encode())
-            self.manifest.write(handle, localtime)
-            self.settings.write(handle, localtime)
-            self.styles.write(handle, localtime)
-            self.sheet.write(handle, localtime)
-        finally:
-            handle.close()
+        cell = ET.SubElement(row, 'table:table-cell', {
+            "office:value-type": "string",
+            "calcext:value-type": "string",
+        })
+        text = ET.SubElement(cell, 'text:p')
+        text.text = "Matěj"

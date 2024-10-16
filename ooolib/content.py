@@ -4,10 +4,9 @@ from xml.etree.ElementTree import Element
 from .mixin import BaseMixin
 
 
-class Spreadsheet(BaseMixin):
+class Content(BaseMixin):
 
     filename = "content.xml"
-    mimetype = "application/vnd.oasis.opendocument.spreadsheet"
 
     def __init__(self):
         self.root: Element = None
