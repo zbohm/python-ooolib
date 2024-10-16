@@ -9,8 +9,9 @@ class Spreadsheet(RootMixin):
     def __init__(self, sheet: Element) -> None:
         super().__init__()
         self.root = sheet
+        self.boundary: list[int, int] = self.calculate_boundary()
 
-    def calculate_boundary(self) -> tuple[int, int]:
+    def calculate_boundary(self) -> list[int, int]:
         """Calculate table max rows and columns."""
         rows, columns = 0, 0
         count_columns = True
