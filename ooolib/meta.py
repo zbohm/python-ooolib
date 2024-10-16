@@ -27,6 +27,6 @@ class Meta(RootMixin):
             self.root = self.create()
         else:
             self.set_value("office:meta/dc:date", datetime.now().isoformat())
-            # self.set_value(self.qualify("office:meta/meta:editing-cycles"), "2")
-            # self.set_value(self.qualify("office:meta/meta:editing-duration"), "PT38S")
+            # self.set_value("office:meta/meta:editing-cycles", "2")
+            # self.set_value("office:meta/meta:editing-duration", "PT38S")
         return self.root

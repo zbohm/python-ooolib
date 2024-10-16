@@ -15,11 +15,11 @@ class Sheet(Content):
             "office:version": self.version,
         })
         ET.SubElement(root, self.qualify('office:body'))
+        self.create_default_sheet(root)
         return root
 
-    def create_sheet(self, name: str = None) -> Element:
-        """Create sheet."""
-        root = self.get_or_create_root()
+    def create_default_sheet(self, root: Element, name: str = None) -> Element:
+        """Create default sheet."""
         body = root.find("office:body", self.ns)
         sheets = body.findall("office:spreadsheet", self.ns)
         if name is None:
@@ -27,6 +27,10 @@ class Sheet(Content):
         sheet = ET.SubElement(body, self.qualify('office:spreadsheet'))
         ET.SubElement(sheet, self.qualify('table:table'), {"table:name": name})
         return sheet
+
+    def create_sheet(self, name: str = None) -> Element:
+        """Create sheet."""
+        return self.create_default_sheet(self.get_or_create_root(), name)
 
     def debug_cells(self) -> None:
         """Debug cells."""
