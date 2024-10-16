@@ -10,9 +10,8 @@ class Settings(RootMixin):
 
     def create(self) -> Element:
         """Create settings."""
-        root = ET.Element('office:document-settings', {
-            "xmlns:office": self.ns["office"],
+        root = ET.Element(self.qualify('office:document-settings'), {
             "office:version": self.version,
         })
-        ET.SubElement(root, 'office:settings')
-        return self.parse_element(root)
+        ET.SubElement(root, self.qualify('office:settings'))
+        return root

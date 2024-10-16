@@ -8,10 +8,9 @@ class Write(Content):
 
     def create(self) -> Element:
         """Create content."""
-        root = ET.Element('office:document-content', {
-            "xmlns:office": self.ns["office"],
+        root = ET.Element(self.qualify('office:document-content'), {
             "office:version": self.version,
         })
-        body = ET.SubElement(root, 'office:body')
-        ET.SubElement(body, 'office:text')
-        return self.parse_element(root)
+        body = ET.SubElement(root, self.qualify('office:body'))
+        ET.SubElement(body, self.qualify('office:text'))
+        return root

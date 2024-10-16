@@ -10,9 +10,8 @@ class Styles(RootMixin):
 
     def create(self) -> Element:
         """Create styles."""
-        root = ET.Element('office:document-styles', {
-            "xmlns:office": self.ns["office"],
+        root = ET.Element(self.qualify('office:document-styles'), {
             "office:version": self.version,
         })
-        ET.SubElement(root, 'office:styles')
-        return self.parse_element(root)
+        ET.SubElement(root, self.qualify('office:styles'))
+        return root

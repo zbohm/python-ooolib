@@ -12,17 +12,14 @@ class Meta(RootMixin):
 
     def create(self) -> Element:
         """Create meta."""
-        root = ET.Element('office:document-meta', {
-            "xmlns:office": self.ns["office"],
-            "xmlns:meta": self.ns["meta"],
-            "xmlns:dc": self.ns["dc"],
+        root = ET.Element(self.qualify('office:document-meta'), {
             "office:version": self.version,
         })
-        meta = ET.SubElement(root, 'office:meta')
-        creation_date = ET.SubElement(meta, 'meta:creation-date')
+        meta = ET.SubElement(root, self.qualify('office:meta'))
+        creation_date = ET.SubElement(meta, self.qualify('meta:creation-date'))
         creation_date.text = datetime.now().isoformat()
-        ET.SubElement(meta, 'meta:generator', text=f'ooolib-python=={VERSION}')
-        return self.parse_element(root)
+        ET.SubElement(meta, self.qualify('meta:generator'), text=f'ooolib-python=={VERSION}')
+        return root
 
     def get_or_create_root(self) -> Element:
         """Build meta."""
@@ -30,6 +27,6 @@ class Meta(RootMixin):
             self.root = self.create()
         else:
             self.set_value("office:meta/dc:date", datetime.now().isoformat())
-            # self.set_value("office:meta/meta:editing-cycles", "2")
-            # self.set_value("office:meta/meta:editing-duration", "PT38S")
+            # self.set_value(self.qualify("office:meta/meta:editing-cycles"), "2")
+            # self.set_value(self.qualify("office:meta/meta:editing-duration"), "PT38S")
         return self.root

@@ -40,10 +40,10 @@ class RootMixin(BaseMixin):
         self.document = document
         self.root: Element = None
 
-    def parse_element(self, element: Element) -> Element:
-        """Parse element."""
-        doc = ET.parse(BytesIO(ET.tostring(element, encoding=self.encoding)))
-        return doc.getroot()
+    def qualify(self, prefied_name: str) -> str:
+        """Create qualified xml element name."""
+        prefix, name = prefied_name.split(":")
+        return f"{{{self.ns[prefix]}}}{name}"
 
     def get_or_create_root(self) -> Element:
         """Get or create section."""
@@ -71,5 +71,5 @@ class RootMixin(BaseMixin):
         if element is None:
             ancestor, name = xpath.rsplit('/', 1)
             parent = self.root.find(ancestor, self.ns)
-            element = ET.SubElement(parent, name)
+            element = ET.SubElement(self.qualify(parent), self.qualify(name))
         element.text = value

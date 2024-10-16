@@ -10,9 +10,8 @@ class Content(RootMixin):
 
     def create(self) -> Element:
         """Create content."""
-        root = ET.Element('office:document-content', {
-            "xmlns:office": self.ns["office"],
+        root = ET.Element(self.qualify('office:document-content'), {
             "office:version": self.version,
         })
-        ET.SubElement(root, 'office:body')
-        return self.parse_element(root)
+        ET.SubElement(root, self.qualify('office:body'))
+        return root

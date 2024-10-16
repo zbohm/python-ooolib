@@ -10,48 +10,54 @@ class Sheet(Content):
 
     def create(self) -> Element:
         """Create content."""
-        root = ET.Element('office:document-content', {
-            "xmlns:office": self.ns["office"],
-            "xmlns:table": self.ns["table"],
-            "xmlns:text": self.ns["text"],
+        root = ET.Element(self.qualify('office:document-content'), {
             "xmlns:calcext": self.ns["calcext"],
             "office:version": self.version,
         })
-        body = ET.SubElement(root, 'office:body')
-        sheet = ET.SubElement(body, 'office:spreadsheet')
-        ET.SubElement(sheet, 'table:table', {"table:name": f"{self.default_list_name}1"})
-        return self.parse_element(root)
+        ET.SubElement(root, self.qualify('office:body'))
+        return root
+
+    def create_sheet(self, name: str = None) -> Element:
+        """Create sheet."""
+        root = self.get_or_create_root()
+        body = root.find("office:body", self.ns)
+        sheets = body.findall("office:spreadsheet", self.ns)
+        if name is None:
+            name = f"{self.default_list_name}{len(sheets) + 1}"
+        sheet = ET.SubElement(body, self.qualify('office:spreadsheet'))
+        ET.SubElement(sheet, self.qualify('table:table'), {"table:name": name})
+        return sheet
 
     def debug_cells(self) -> None:
         """Debug cells."""
-        root = self.get_or_create_root()
-        table = root.find(".//table:table", self.ns)
-        row = ET.SubElement(table, 'table:table-row')
-        cell = ET.SubElement(row, 'table:table-cell', {
+        sheet = self.create_sheet()
+        table = sheet.find("table:table", self.ns)
+        row = ET.SubElement(table, self.qualify('table:table-row'))
+        cell = ET.SubElement(row, self.qualify('table:table-cell'), {
             "office:value-type": "float",
             "office:value": "1",
             "calcext:value-type": "float",
         })
-        text = ET.SubElement(cell, 'text:p')
+        text = ET.SubElement(cell, self.qualify('text:p'))
         text.text = "1"
-        cell = ET.SubElement(row, 'table:table-cell', {
+        cell = ET.SubElement(row, self.qualify('table:table-cell'), {
             "office:value-type": "float",
             "office:value": "2",
             "calcext:value-type": "float",
         })
-        text = ET.SubElement(cell, 'text:p')
+        text = ET.SubElement(cell, self.qualify('text:p'))
         text.text = "2"
-        cell = ET.SubElement(row, 'table:table-cell', {
+        cell = ET.SubElement(row, self.qualify('table:table-cell'), {
             "office:value-type": "float",
             "office:value": "3",
             "calcext:value-type": "float",
         })
-        text = ET.SubElement(cell, 'text:p')
+        text = ET.SubElement(cell, self.qualify('text:p'))
         text.text = "3"
 
-        cell = ET.SubElement(row, 'table:table-cell', {
+        cell = ET.SubElement(row, self.qualify('table:table-cell'), {
             "office:value-type": "string",
             "calcext:value-type": "string",
         })
-        text = ET.SubElement(cell, 'text:p')
+        text = ET.SubElement(cell, self.qualify('text:p'))
         text.text = "Matěj"

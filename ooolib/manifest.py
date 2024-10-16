@@ -10,19 +10,18 @@ class Manifest(RootMixin):
 
     def create(self) -> Element:
         """Create manifest."""
-        root = ET.Element('manifest:manifest', {
-            "xmlns:manifest": self.ns["manifest"],
+        root = ET.Element(self.qualify('manifest:manifest'), {
             "manifest:version": self.version,
         })
-        ET.SubElement(root, "manifest:file-entry", {
+        ET.SubElement(root, self.qualify("manifest:file-entry"), {
             "manifest:full-path": "/",
             "manifest:media-type": "application/vnd.oasis.opendocument.spreadsheet",
             "manifest:version": self.version,
         })
 
         for name in ("meta", "styles", "content", "settings"):
-            ET.SubElement(root, "manifest:file-entry", {
+            ET.SubElement(root, self.qualify("manifest:file-entry"), {
                 "manifest:full-path": f"{name}.xml",
                 "manifest:media-type": "text/xml",
             })
-        return self.parse_element(root)
+        return root
