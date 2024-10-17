@@ -94,14 +94,11 @@ class Spreadsheet(RootMixin):
 
     def create_row(self) -> Element:
         """Create row."""
-        table = self.root_find('table:table')
-        return ET.SubElement(table, self.qname("table:table-row"))
+        return self.create_sub_element(self.root_find('table:table'), "table:table")
 
     def create_cell(self, parent: Element, attrs: Optional[dict[str, str]] = None) -> Element:
         """Create cell."""
-        if attrs is None:
-            attrs = {}
-        return ET.SubElement(parent, self.qname("table:table-cell"), attrs)
+        return self.create_sub_element(parent, "table:table-cell", attrs)
 
     def create_text_p(self, parent: Element, value: str):
         """Create text paragraph."""
@@ -121,5 +118,5 @@ class Spreadsheet(RootMixin):
         position_row, table_row = self.find_row(selected_row)
         if table_row is None:
             element_row = self.create_row()
-            cell = self.create_cell(element_row, {self.qname("office:value-type"): value_type.value})
+            cell = self.create_cell(element_row, {"office:value-type": value_type.value})
             self.create_text_p(cell, str(value))

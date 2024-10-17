@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import zipfile
 from io import BytesIO
-from typing import TYPE_CHECKING, Callable, cast
+from typing import TYPE_CHECKING, Callable, Optional, Union, cast
 from xml.etree.ElementTree import Element
 
 from .exceptions import ElementNotFound
@@ -62,6 +62,20 @@ class RootMixin:
             parent = self.root_find(ancestor)
             element = ET.SubElement(parent, self.qname(name))
         element.text = value
+
+    def create_sub_element(
+            self,
+            parent: Element,
+            name: str,
+            attrs: Optional[dict[str, str]] = None,
+            value: Optional[Union[str, int, float]] = None
+    ) -> Element:
+        """Create sub element."""
+        attibutes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
+        element = ET.SubElement(parent, self.qname(name), attibutes)
+        if value is not None:
+            element.text = str(value)
+        return element
 
 
 class FileEntryMixin(BaseMixin):
