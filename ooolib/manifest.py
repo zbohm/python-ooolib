@@ -19,13 +19,16 @@ class Manifest(OpenDocumentMixin):
             "manifest:media-type": "application/vnd.oasis.opendocument.spreadsheet",
             "manifest:version": self.version,
         })
-
-        for name in ("meta", "styles", "content", "settings"):
+        for entry in self.document.payload.values():
             ET.SubElement(root, self.qualify("manifest:file-entry"), {
-                "manifest:full-path": f"{name}.xml",
-                "manifest:media-type": "text/xml",
+                "manifest:full-path": entry.filename,
+                "manifest:media-type": entry.mimetype,
             })
         return root
+
+    def get_content(self) -> bytes:
+        """Get content."""
+        return ET.tostring(self.create(), encoding='utf-8', xml_declaration=True)
 
     def get_file_entries(self) -> Iterator[tuple[str, str]]:
         """Get file entries."""
