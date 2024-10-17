@@ -69,10 +69,9 @@ class Spreadsheet(RootMixin):
             if match is None:
                 raise InvalidCellPosition(position)
             scolumn, srow = match.group("column"), match.group("row")
-            num = 0
+            column = 0
             for c in scolumn:
-                num = num * 26 + (ord(c) - 65) + 1
-            column = num
+                column = column * 26 + (ord(c) - 65) + 1
             row = int(srow)
         # https://wiki.documentfoundation.org/Faq/Calc/022
         if not (0 < column < 0x4000 and 0 < row < 2**20):
@@ -89,7 +88,7 @@ class Spreadsheet(RootMixin):
         print(":", position, column, row)
         if value_type is None:
             value_type = self.resolve_value_type(value)
-        print("value:", repr(value), "value_type:", value_type)
+        # print("value:", repr(value), "value_type:", value_type)
         position_row = 0
         for table_row in self.root.findall('table:table/table:table-row', self.ns):
             if row == position_row:
@@ -99,4 +98,4 @@ class Spreadsheet(RootMixin):
                 position_row += 1
             else:
                 position_row += int(repeated)
-            print("position_row:", position_row)
+            # print("position_row:", position_row)
