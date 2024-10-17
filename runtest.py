@@ -7,6 +7,7 @@ calc = Calc()
 calc.load("F10.ods")
 
 calc.debug_cells()
+
 sheet = calc.get_sheet()
 print("Boundary:", sheet.boundary)
 

@@ -42,10 +42,10 @@ class RootMixin:
         super().__init__()
         self.root: Element = cast(Element, None)
 
-    def qualify(self, prefix_and_name: str) -> str:
+    def qname(self, prefix_and_name: str) -> str:
         """Create qualified xml element name."""
         prefix, name = prefix_and_name.split(":")
-        return f"{{{self.ns[prefix]}}}{name}"
+        return ET.QName(self.ns[prefix], name)
 
     def set_descendant_element_value(self, parent_and_name: str, value: str) -> None:
         """Set value to the element of 'prefix:parent/prefix:name'."""
@@ -55,7 +55,7 @@ class RootMixin:
             parent = self.root.find(ancestor, self.ns)
             if parent is None:
                 raise ElementNotFound(ancestor)
-            element = ET.SubElement(parent, self.qualify(name))
+            element = ET.SubElement(parent, self.qname(name))
         element.text = value
 
 

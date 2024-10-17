@@ -14,8 +14,8 @@ class Content(OpenDocumentMixin):
 
     def create(self) -> Element:
         """Create content."""
-        root = ET.Element(self.qualify('office:document-content'), {
+        root = ET.Element(self.qname('office:document-content'), {
             "office:version": self.version,
         })
-        ET.SubElement(root, self.qualify('office:body'))
+        ET.SubElement(root, self.qname('office:body'))
         return root

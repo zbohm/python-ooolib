@@ -11,16 +11,16 @@ class Manifest(OpenDocumentMixin):
 
     def create(self) -> Element:
         """Create manifest."""
-        root = ET.Element(self.qualify('manifest:manifest'), {
+        root = ET.Element(self.qname('manifest:manifest'), {
             "manifest:version": self.version,
         })
-        ET.SubElement(root, self.qualify("manifest:file-entry"), {
+        ET.SubElement(root, self.qname("manifest:file-entry"), {
             "manifest:full-path": "/",
             "manifest:media-type": "application/vnd.oasis.opendocument.spreadsheet",
             "manifest:version": self.version,
         })
         for entry in self.document.payload.values():
-            ET.SubElement(root, self.qualify("manifest:file-entry"), {
+            ET.SubElement(root, self.qname("manifest:file-entry"), {
                 "manifest:full-path": entry.filename,
                 "manifest:media-type": entry.mimetype,
             })
@@ -34,6 +34,6 @@ class Manifest(OpenDocumentMixin):
         """Get file entries."""
         for entry in self.root.findall("manifest:file-entry", self.ns):
             yield (
-                cast(str, entry.get(self.qualify("manifest:full-path"))),
-                cast(str, entry.get(self.qualify("manifest:media-type"))),
+                cast(str, entry.get(self.qname("manifest:full-path"))),
+                cast(str, entry.get(self.qname("manifest:media-type"))),
             )

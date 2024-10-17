@@ -12,13 +12,13 @@ class Meta(OpenDocumentMixin):
 
     def create(self) -> Element:
         """Create meta."""
-        root = ET.Element(self.qualify('office:document-meta'), {
+        root = ET.Element(self.qname('office:document-meta'), {
             "office:version": self.version,
         })
-        meta = ET.SubElement(root, self.qualify('office:meta'))
-        creation_date = ET.SubElement(meta, self.qualify('meta:creation-date'))
+        meta = ET.SubElement(root, self.qname('office:meta'))
+        creation_date = ET.SubElement(meta, self.qname('meta:creation-date'))
         creation_date.text = datetime.now().isoformat()
-        ET.SubElement(meta, self.qualify('meta:generator'), text=f'ooolib-python=={VERSION}')
+        ET.SubElement(meta, self.qname('meta:generator'), text=f'ooolib-python=={VERSION}')
         return root
 
     def get_or_create_root(self) -> Element:

@@ -10,8 +10,8 @@ class Settings(OpenDocumentMixin):
 
     def create(self) -> Element:
         """Create settings."""
-        root = ET.Element(self.qualify('office:document-settings'), {
+        root = ET.Element(self.qname('office:document-settings'), {
             "office:version": self.version,
         })
-        ET.SubElement(root, self.qualify('office:settings'))
+        ET.SubElement(root, self.qname('office:settings'))
         return root

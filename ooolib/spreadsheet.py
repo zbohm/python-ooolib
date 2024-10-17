@@ -29,7 +29,7 @@ class Spreadsheet(RootMixin):
         rows, columns = 0, 0
         count_columns = True
         for row in self.root.findall('table:table/table:table-row', self.ns):
-            repeated = row.get(self.qualify("table:number-rows-repeated"))
+            repeated = row.get(self.qname("table:number-rows-repeated"))
             if repeated is None:
                 rows += 1
             else:
@@ -37,9 +37,9 @@ class Spreadsheet(RootMixin):
             if count_columns:
                 count_columns = False  # count only once
                 for cell in row.findall("table:table-cell", self.ns):
-                    repeated = cell.get(self.qualify("table:number-columns-repeated"))
+                    repeated = cell.get(self.qname("table:number-columns-repeated"))
                     if repeated is None:
-                        spanned = cell.get(self.qualify("table:number-columns-spanned"))
+                        spanned = cell.get(self.qname("table:number-columns-spanned"))
                         if spanned is None:
                             columns += 1
                         else:
@@ -94,7 +94,7 @@ class Spreadsheet(RootMixin):
         for table_row in self.root.findall('table:table/table:table-row', self.ns):
             if row == position_row:
                 break
-            repeated = table_row.get(self.qualify("table:number-rows-repeated"))
+            repeated = table_row.get(self.qname("table:number-rows-repeated"))
             if repeated is None:
                 position_row += 1
             else:
