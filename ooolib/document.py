@@ -44,7 +44,7 @@ class OpenDocument(BaseMixin):
         """Load document from filename."""
         handle = zipfile.ZipFile(filename)
         payload = self.get_default_payload()
-        payload.pop(self.manifest.filename)
+        manifest = payload.pop(self.manifest.filename)
         try:
             mimetype = handle.read("mimetype").decode("utf-8")
             if self.mimetype is None:
@@ -52,9 +52,9 @@ class OpenDocument(BaseMixin):
             else:
                 if self.mimetype != mimetype:
                     raise UnexpectedMimetype(mimetype)
-            self.manifest.read(handle)
-            self.payload[self.manifest.filename] = self.manifest
-            for path, mimetype in self.manifest.get_file_entries():
+            manifest.read(handle)
+            self.payload[manifest.filename] = manifest
+            for path, mimetype in manifest.get_file_entries():
                 if re.search(r"\.\w+$", path):
                     file_entry = payload.get(path, FileEntry(self))
                     file_entry.filename = path
