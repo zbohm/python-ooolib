@@ -1,5 +1,5 @@
-from typing import Iterator
 import xml.etree.ElementTree as ET
+from typing import Iterator, cast
 from xml.etree.ElementTree import Element
 
 from .mixin import OpenDocumentMixin
@@ -34,6 +34,6 @@ class Manifest(OpenDocumentMixin):
         """Get file entries."""
         for entry in self.root.findall("manifest:file-entry", self.ns):
             yield (
-                entry.get(self.qualify("manifest:full-path")),
-                entry.get(self.qualify("manifest:media-type")),
+                cast(str, entry.get(self.qualify("manifest:full-path"))),
+                cast(str, entry.get(self.qualify("manifest:media-type"))),
             )

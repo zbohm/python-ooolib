@@ -1,7 +1,9 @@
 import xml.etree.ElementTree as ET
+from typing import Optional
 from xml.etree.ElementTree import Element
 
 from .content import Content
+from .exceptions import ElementNotFound
 from .spreadsheet import Spreadsheet
 
 
@@ -19,9 +21,11 @@ class Sheet(Content):
         self.create_default_sheet(root)
         return root
 
-    def create_default_sheet(self, root: Element, name: str = None) -> Element:
+    def create_default_sheet(self, root: Element, name: Optional[str] = None) -> Element:
         """Create default sheet."""
         body = root.find("office:body", self.ns)
+        if body is None:
+            raise ElementNotFound("office:body")
         sheets = body.findall("office:spreadsheet", self.ns)
         if name is None:
             name = f"{self.default_list_name}{len(sheets) + 1}"
@@ -29,7 +33,7 @@ class Sheet(Content):
         ET.SubElement(sheet, self.qualify('table:table'), {"table:name": name})
         return sheet
 
-    def create_sheet(self, name: str = None) -> Spreadsheet:
+    def create_sheet(self, name: Optional[str] = None) -> Spreadsheet:
         """Create sheet."""
         return Spreadsheet(self.create_default_sheet(self.get_or_create_root(), name))
 
@@ -43,6 +47,8 @@ class Sheet(Content):
         """Debug cells."""
         sheet = self.create_sheet()
         table = sheet.root.find("table:table", self.ns)
+        if table is None:
+            raise ElementNotFound("table:table")
         row = ET.SubElement(table, self.qualify('table:table-row'))
         cell = ET.SubElement(row, self.qualify('table:table-cell'), {
             "office:value-type": "float",

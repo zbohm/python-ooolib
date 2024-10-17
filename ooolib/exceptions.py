@@ -4,3 +4,7 @@ class OooLibException(Exception):
 
 class UnexpectedMimetype(OooLibException):
     """Unexpected mimetype."""
+
+
+class ElementNotFound(OooLibException):
+    """Element not found."""

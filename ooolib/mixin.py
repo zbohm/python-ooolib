@@ -1,10 +1,15 @@
 import xml.etree.ElementTree as ET
 import zipfile
 from io import BytesIO
-from typing import Callable
+from typing import TYPE_CHECKING, Callable, cast
 from xml.etree.ElementTree import Element
 
+from .exceptions import ElementNotFound
+
 localtimeType = tuple[int, int, int, int, int, int]  # year, month, day, hour, min, sec
+
+if TYPE_CHECKING:
+    from .document import OpenDocument
 
 
 class BaseMixin:
@@ -35,7 +40,7 @@ class RootMixin:
 
     def __init__(self):
         super().__init__()
-        self.root: Element = None
+        self.root: Element = cast(Element, None)
 
     def qualify(self, prefix_and_name: str) -> str:
         """Create qualified xml element name."""
@@ -48,7 +53,9 @@ class RootMixin:
         if element is None:
             ancestor, name = parent_and_name.rsplit('/', 1)
             parent = self.root.find(ancestor, self.ns)
-            element = ET.SubElement(self.qualify(parent), self.qualify(name))
+            if parent is None:
+                raise ElementNotFound(ancestor)
+            element = ET.SubElement(parent, self.qualify(name))
         element.text = value
 
 
@@ -57,10 +64,10 @@ class FileEntryMixin(BaseMixin):
     filename: str
     mimetype = "text/xml"
 
-    def __init__(self, document: "ooolib.document.OpenDocument"):
+    def __init__(self, document: "OpenDocument") -> None:
         super().__init__()
         self.document = document
-        self.content: bytes = None
+        self.content: bytes = b""
 
     def read(self, handle: zipfile.ZipFile) -> None:
         """Read content from handle."""

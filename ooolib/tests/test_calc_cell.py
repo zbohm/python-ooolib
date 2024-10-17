@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import os
 import unittest
 import zipfile
-import six
 
+import six
 from lxml import etree
 
 import ooolib
