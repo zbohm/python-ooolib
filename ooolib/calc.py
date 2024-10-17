@@ -30,7 +30,7 @@ class Sheet(Content):
         if name is None:
             name = f"{self.default_list_name}{len(sheets) + 1}"
         sheet = ET.SubElement(body, self.qname('office:spreadsheet'))
-        ET.SubElement(sheet, self.qname('table:table'), {"table:name": name})
+        ET.SubElement(sheet, self.qname('table:table'), {self.qname("table:name"): name})
         return sheet
 
     def create_sheet(self, name: Optional[str] = None) -> Spreadsheet:
@@ -51,30 +51,30 @@ class Sheet(Content):
             raise ElementNotFound("table:table")
         row = ET.SubElement(table, self.qname('table:table-row'))
         cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            "office:value-type": "float",
-            "office:value": "1",
-            "calcext:value-type": "float",
+            self.qname("office:value-type"): "float",
+            self.qname("office:value"): "1",
+            self.qname("calcext:value-type"): "float",
         })
         text = ET.SubElement(cell, self.qname('text:p'))
         text.text = "1"
         cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            "office:value-type": "float",
-            "office:value": "2",
-            "calcext:value-type": "float",
+            self.qname("office:value-type"): "float",
+            self.qname("office:value"): "2",
+            self.qname("calcext:value-type"): "float",
         })
         text = ET.SubElement(cell, self.qname('text:p'))
         text.text = "2"
         cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            "office:value-type": "float",
-            "office:value": "3",
-            "calcext:value-type": "float",
+            self.qname("office:value-type"): "float",
+            self.qname("office:value"): "3",
+            self.qname("calcext:value-type"): "float",
         })
         text = ET.SubElement(cell, self.qname('text:p'))
         text.text = "3"
 
         cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            "office:value-type": "string",
-            "calcext:value-type": "string",
+            self.qname("office:value-type"): "string",
+            self.qname("calcext:value-type"): "string",
         })
         text = ET.SubElement(cell, self.qname('text:p'))
         text.text = "Matěj"

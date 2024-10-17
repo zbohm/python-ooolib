@@ -45,16 +45,21 @@ class RootMixin:
     def qname(self, prefix_and_name: str) -> str:
         """Create qualified xml element name."""
         prefix, name = prefix_and_name.split(":")
-        return ET.QName(self.ns[prefix], name)
+        return str(ET.QName(self.ns[prefix], name))
+
+    def root_find(self, name: str) -> Element:
+        """Find in root element."""
+        node = self.root.find(name, self.ns)
+        if node is None:
+            raise ElementNotFound(name)
+        return node
 
     def set_descendant_element_value(self, parent_and_name: str, value: str) -> None:
         """Set value to the element of 'prefix:parent/prefix:name'."""
         element = self.root.find(parent_and_name, self.ns)
         if element is None:
             ancestor, name = parent_and_name.rsplit('/', 1)
-            parent = self.root.find(ancestor, self.ns)
-            if parent is None:
-                raise ElementNotFound(ancestor)
+            parent = self.root_find(ancestor)
             element = ET.SubElement(parent, self.qname(name))
         element.text = value
 

@@ -1,4 +1,5 @@
 import re
+import xml.etree.ElementTree as ET
 from enum import Enum, unique
 from typing import Optional, Union
 from xml.etree.ElementTree import Element
@@ -78,24 +79,47 @@ class Spreadsheet(RootMixin):
             raise CellPositionOutOfRange(position)
         return column, row
 
+    def find_row(self, selected_row: int) -> tuple[int, Optional[Element]]:
+        """Find row."""
+        position_row, table_row = 0, None
+        for table_row in self.root.findall('table:table/table:table-row', self.ns):
+            repeated = table_row.get(self.qname("table:number-rows-repeated"))
+            if repeated is None:
+                position_row += 1
+            else:
+                position_row += int(repeated)
+            if position_row >= selected_row:
+                break  # == find cell; > insert row before
+        return position_row, table_row
+
+    def create_row(self) -> Element:
+        """Create row."""
+        table = self.root_find('table:table')
+        return ET.SubElement(table, self.qname("table:table-row"))
+
+    def create_cell(self, parent: Element, attrs: Optional[dict[str, str]] = None) -> Element:
+        """Create cell."""
+        if attrs is None:
+            attrs = {}
+        return ET.SubElement(parent, self.qname("table:table-cell"), attrs)
+
+    def create_text_p(self, parent: Element, value: str):
+        """Create text paragraph."""
+        node = ET.SubElement(parent, self.qname("text:p"))
+        node.text = value
+        return node
+
     def set_cell_value(
             self, position: Union[str, tuple[int, int]],
             value: Union[str, int, float],
             value_type: Optional[ValueType] = None
     ) -> None:
         """Set cell value."""
-        column, row = self.get_coordinates(position)
-        print(":", position, column, row)
+        selected_column, selected_row = self.get_coordinates(position)
         if value_type is None:
             value_type = self.resolve_value_type(value)
-        # print("value:", repr(value), "value_type:", value_type)
-        position_row = 0
-        for table_row in self.root.findall('table:table/table:table-row', self.ns):
-            if row == position_row:
-                break
-            repeated = table_row.get(self.qname("table:number-rows-repeated"))
-            if repeated is None:
-                position_row += 1
-            else:
-                position_row += int(repeated)
-            # print("position_row:", position_row)
+        position_row, table_row = self.find_row(selected_row)
+        if table_row is None:
+            element_row = self.create_row()
+            cell = self.create_cell(element_row, {self.qname("office:value-type"): value_type.value})
+            self.create_text_p(cell, str(value))
