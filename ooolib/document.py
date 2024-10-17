@@ -72,6 +72,8 @@ class OpenDocument(BaseMixin):
 
         localtime = time.localtime()[:6]
         handle = zipfile.ZipFile(filename, "w")
+        if not self.payload:
+            self.payload = self.get_default_payload()
         try:
             self.write_content(handle, localtime, "mimetype", self.mimetype.encode())
             for entry in self.payload.values():
