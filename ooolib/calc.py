@@ -49,32 +49,32 @@ class Sheet(Content):
         table = sheet.root.find("table:table", self.ns)
         if table is None:
             raise ElementNotFound("table:table")
-        row = ET.SubElement(table, self.qname('table:table-row'))
-        cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            self.qname("office:value-type"): "float",
-            self.qname("office:value"): "1",
-            self.qname("calcext:value-type"): "float",
-        })
-        text = ET.SubElement(cell, self.qname('text:p'))
-        text.text = "1"
-        cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            self.qname("office:value-type"): "float",
-            self.qname("office:value"): "2",
-            self.qname("calcext:value-type"): "float",
-        })
-        text = ET.SubElement(cell, self.qname('text:p'))
-        text.text = "2"
-        cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            self.qname("office:value-type"): "float",
-            self.qname("office:value"): "3",
-            self.qname("calcext:value-type"): "float",
-        })
-        text = ET.SubElement(cell, self.qname('text:p'))
-        text.text = "3"
 
-        cell = ET.SubElement(row, self.qname('table:table-cell'), {
-            self.qname("office:value-type"): "string",
-            self.qname("calcext:value-type"): "string",
+        row = self.create_sub_element(table, "table:table-row")
+
+        cell = self.create_sub_element(row, "table:table-cell", {
+            "office:value-type": "float",
+            "office:value": "1",
+            "calcext:value-type": "float",
         })
-        text = ET.SubElement(cell, self.qname('text:p'))
-        text.text = "Matěj"
+        self.create_sub_element(cell, "text:p", value="1")
+
+        cell = self.create_sub_element(row, "table:table-cell", {
+            "office:value-type": "float",
+            "office:value": "2",
+            "calcext:value-type": "float",
+        })
+        self.create_sub_element(cell, "text:p", value="2")
+
+        cell = self.create_sub_element(row, "table:table-cell", {
+            "office:value-type": "float",
+            "office:value": "3",
+            "calcext:value-type": "float",
+        })
+        self.create_sub_element(cell, "text:p", value="3")
+
+        cell = self.create_sub_element(row, "table:table-cell", {
+            "office:value-type": "string",
+            "calcext:value-type": "string",
+        })
+        self.create_sub_element(cell, "text:p", value="Matěj")

@@ -1,5 +1,4 @@
 import re
-import xml.etree.ElementTree as ET
 from enum import Enum, unique
 from typing import Optional, Union
 from xml.etree.ElementTree import Element
@@ -102,9 +101,7 @@ class Spreadsheet(RootMixin):
 
     def create_text_p(self, parent: Element, value: str):
         """Create text paragraph."""
-        node = ET.SubElement(parent, self.qname("text:p"))
-        node.text = value
-        return node
+        return self.create_sub_element(parent, "text:p", {}, value)
 
     def set_cell_value(
             self, position: Union[str, tuple[int, int]],
