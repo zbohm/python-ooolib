@@ -34,6 +34,7 @@ class RootMixin:
     }
 
     def __init__(self):
+        super().__init__()
         self.root: Element = None
 
     def qualify(self, prefix_and_name: str) -> str:
@@ -51,14 +52,32 @@ class RootMixin:
         element.text = value
 
 
-class OpenDocumentMixin(BaseMixin, RootMixin):
+class FileEntryMixin:
 
-    create: Callable
     filename: str
+    mimetype = "text/xml"
 
     def __init__(self, document: "ooolib.document.OpenDocument"):
         super().__init__()
         self.document = document
+        self.content: bytes = None
+
+    def read(self, handle: zipfile.ZipFile) -> None:
+        """Read content from handle."""
+        self.content = handle.read(self.filename)
+
+    def get_content(self) -> bytes:
+        """Get content."""
+        return self.content
+
+    def write(self, handle: zipfile.ZipFile, localtime: localtimeType) -> None:
+        """Write content into the handle."""
+        self.write_content(handle, localtime, self.filename, self.get_content())
+
+
+class OpenDocumentMixin(BaseMixin, FileEntryMixin, RootMixin):
+
+    create: Callable
 
     def get_or_create_root(self) -> Element:
         """Get or create section."""
@@ -71,11 +90,6 @@ class OpenDocumentMixin(BaseMixin, RootMixin):
         doc = ET.parse(BytesIO(handle.read(self.filename)))
         self.root = doc.getroot()
 
-    def write(self, handle: zipfile.ZipFile, localtime: localtimeType) -> None:
-        """Write content into the handle."""
-        self.write_content(
-            handle,
-            localtime,
-            self.filename,
-            ET.tostring(self.get_or_create_root(), encoding='utf-8', xml_declaration=True)
-        )
+    def get_content(self) -> bytes:
+        """Get content."""
+        return ET.tostring(self.get_or_create_root(), encoding='utf-8', xml_declaration=True)
