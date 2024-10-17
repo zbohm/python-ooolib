@@ -1,3 +1,4 @@
+from typing import Iterator
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
@@ -25,3 +26,11 @@ class Manifest(OpenDocumentMixin):
                 "manifest:media-type": "text/xml",
             })
         return root
+
+    def get_file_entries(self) -> Iterator[tuple[str, str]]:
+        """Get file entries."""
+        for entry in self.root.findall("manifest:file-entry", self.ns):
+            yield (
+                entry.get(self.qualify("manifest:full-path")),
+                entry.get(self.qualify("manifest:media-type")),
+            )

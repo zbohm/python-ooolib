@@ -52,7 +52,7 @@ class RootMixin:
         element.text = value
 
 
-class FileEntryMixin:
+class FileEntryMixin(BaseMixin):
 
     filename: str
     mimetype = "text/xml"
@@ -75,7 +75,7 @@ class FileEntryMixin:
         self.write_content(handle, localtime, self.filename, self.get_content())
 
 
-class OpenDocumentMixin(BaseMixin, FileEntryMixin, RootMixin):
+class OpenDocumentMixin(FileEntryMixin, RootMixin):
 
     create: Callable
 

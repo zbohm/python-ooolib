@@ -1,7 +1,11 @@
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
-from .mixin import OpenDocumentMixin
+from .mixin import FileEntryMixin, OpenDocumentMixin
+
+
+class FileEntry(FileEntryMixin):
+    """File Entry."""
 
 
 class Content(OpenDocumentMixin):
