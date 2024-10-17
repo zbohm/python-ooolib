@@ -1,65 +1,73 @@
     <office:spreadsheet>
       <table:calculation-settings table:automatic-find-labels="false" table:use-regular-expressions="false" table:use-wildcards="true"/>
       <table:table table:name="List1" table:style-name="ta1">
+
         <table:table-column table:style-name="co1" table:number-columns-repeated="10" table:default-cell-style-name="Default"/>
+
         <table:table-row table:style-name="ro1" line="1">
-          <table:table-cell table:number-columns-repeated="9"/>
-          <table:table-cell office:value-type="string" calcext:value-type="string">
+          <table:table-cell count="9" table:number-columns-repeated="9"/>
+          <table:table-cell count="10" office:value-type="string" calcext:value-type="string">
             <text:p>J1</text:p>
           </table:table-cell>
         </table:table-row>
+
         <table:table-row table:style-name="ro1" line="2">
-          <table:table-cell table:number-columns-repeated="9"/>
-          <table:table-cell office:value-type="string" calcext:value-type="string">
+          <table:table-cell count="9" table:number-columns-repeated="9"/>
+          <table:table-cell count="10" office:value-type="string" calcext:value-type="string">
             <text:p>J2</text:p>
           </table:table-cell>
         </table:table-row>
+
         <table:table-row table:style-name="ro1" line="3">
-          <table:table-cell/>
-          <table:table-cell office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="4">
+          <table:table-cell count="1"/>
+          <table:table-cell count="3" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="4">
             <text:p>B3-C6</text:p>
           </table:table-cell>
           <table:covered-table-cell/>
-          <table:table-cell table:number-columns-repeated="4"/>
-          <table:table-cell office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="3">
+          <table:table-cell count="7" table:number-columns-repeated="4"/>
+          <table:table-cell count="9" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="3">
             <text:p>H3-I5</text:p>
           </table:table-cell>
           <table:covered-table-cell/>
-          <table:table-cell office:value-type="string" calcext:value-type="string">
+          <table:table-cell count="10" office:value-type="string" calcext:value-type="string">
             <text:p>J3</text:p>
           </table:table-cell>
         </table:table-row>
+
         <table:table-row table:style-name="ro1" line="4">
-          <table:table-cell/>
+          <table:table-cell count="1"/>
           <table:covered-table-cell table:number-columns-repeated="2"/>
-          <table:table-cell/>
-          <table:table-cell office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+          <table:table-cell count="2"/>
+          <table:table-cell count="4" office:value-type="string" calcext:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
             <text:p>E4-F4</text:p>
           </table:table-cell>
           <table:covered-table-cell/>
-          <table:table-cell/>
+          <table:table-cell count="5"/>
           <table:covered-table-cell table:number-columns-repeated="2"/>
-          <table:table-cell office:value-type="string" calcext:value-type="string">
+          <table:table-cell count="6" office:value-type="string" calcext:value-type="string">
             <text:p>J4</text:p>
           </table:table-cell>
         </table:table-row>
+
         <table:table-row table:style-name="ro1" line="5">
-          <table:table-cell/>
+          <table:table-cell count="1"/>
           <table:covered-table-cell table:number-columns-repeated="2"/>
-          <table:table-cell table:number-columns-repeated="4"/>
+          <table:table-cell count="5" table:number-columns-repeated="4"/>
           <table:covered-table-cell table:number-columns-repeated="2"/>
-          <table:table-cell office:value-type="string" calcext:value-type="string">
+          <table:table-cell count="6" office:value-type="string" calcext:value-type="string">
             <text:p>J5</text:p>
           </table:table-cell>
         </table:table-row>
+
         <table:table-row table:style-name="ro1" line="6">
-          <table:table-cell/>
+          <table:table-cell count="1"/>
           <table:covered-table-cell table:number-columns-repeated="2"/>
-          <table:table-cell table:number-columns-repeated="6"/>
-          <table:table-cell office:value-type="string" calcext:value-type="string">
+          <table:table-cell count="7" table:number-columns-repeated="6"/>
+          <table:table-cell count="8" office:value-type="string" calcext:value-type="string">
             <text:p>J6</text:p>
           </table:table-cell>
         </table:table-row>
+
       </table:table>
       <table:named-expressions/>
     </office:spreadsheet>
