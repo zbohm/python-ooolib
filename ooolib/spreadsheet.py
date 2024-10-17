@@ -56,7 +56,7 @@ class Spreadsheet(RootMixin):
         elif isinstance(value, str):
             if value[:1] == "=":
                 value_type = ValueType.formula
-            elif re.match("https?://", value):
+            elif re.match("(https?|file)://", value):
                 value_type = ValueType.link
         return value_type
 
@@ -72,10 +72,10 @@ class Spreadsheet(RootMixin):
             num = 0
             for c in scolumn:
                 num = num * 26 + (ord(c) - 65) + 1
-            column = num - 1
-            row = int(srow) - 1
+            column = num
+            row = int(srow)
         # https://wiki.documentfoundation.org/Faq/Calc/022
-        if not (-1 < column < 0x4000 and -1 < row < 2**20):
+        if not (0 < column < 0x4000 and 0 < row < 2**20):
             raise CellPositionOutOfRange(position)
         return column, row
 
