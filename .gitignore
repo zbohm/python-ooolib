@@ -6,4 +6,4 @@ __pycache__/
 .coverage*
 dist/
 build/
-ooolib.egg-info
+ooolib_python.egg-info

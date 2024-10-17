@@ -26,7 +26,5 @@ class Meta(OpenDocumentMixin):
         if self.root is None:
             self.root = self.create()
         else:
-            self.set_value("office:meta/dc:date", datetime.now().isoformat())
-            # self.set_value("office:meta/meta:editing-cycles", "2")
-            # self.set_value("office:meta/meta:editing-duration", "PT38S")
+            self.set_descendant_element_value("office:meta/dc:date", datetime.now().isoformat())
         return self.root

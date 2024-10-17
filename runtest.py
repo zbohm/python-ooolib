@@ -4,7 +4,7 @@ from ooolib.document import Calc
 
 calc = Calc()
 
-# calc.load("F10.ods")
+calc.load("F10.ods")
 
 calc.debug_cells()
 sheet = calc.get_sheet()
@@ -16,7 +16,7 @@ print("Boundary:", sheet.boundary)
 # sheet.set_cell_value(5, 3, "=SUM()")
 # sheet.set_cell_value(6, 3, "https://example.com/")
 
-name = "test-02-out.ods"
+name = "F10-out.ods"
 calc.save(name)
 print(f"Saved file {name}")
 

@@ -47,7 +47,7 @@ class RootMixin:
         prefix, name = prefix_and_name.split(":")
         return f"{{{self.ns[prefix]}}}{name}"
 
-    def set_value(self, parent_and_name: str, value: str) -> None:
+    def set_descendant_element_value(self, parent_and_name: str, value: str) -> None:
         """Set value to the element of 'prefix:parent/prefix:name'."""
         element = self.root.find(parent_and_name, self.ns)
         if element is None:
