@@ -68,12 +68,12 @@ class Spreadsheet(RootMixin):
             match = re.match(r"(?P<column>[A-Z]{1,3})(?P<row>\d+)$", position)
             if match is None:
                 raise InvalidCellPosition(position)
-            columns, row = match.group("column"), match.group("row")
+            scolumn, srow = match.group("column"), match.group("row")
             num = 0
-            for c in columns:
+            for c in scolumn:
                 num = num * 26 + (ord(c) - 65) + 1
             column = num - 1
-            row = int(row) - 1
+            row = int(srow) - 1
         # https://wiki.documentfoundation.org/Faq/Calc/022
         if not (-1 < column < 0x4000 and -1 < row < 2**20):
             raise CellPositionOutOfRange(position)
