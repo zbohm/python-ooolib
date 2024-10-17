@@ -3,6 +3,7 @@ from enum import Enum, unique
 from typing import Optional, Union
 from xml.etree.ElementTree import Element
 
+from .exceptions import CellPositionOutOfRange, InvalidCellPosition
 from .mixin import RootMixin
 
 
@@ -59,12 +60,33 @@ class Spreadsheet(RootMixin):
                 value_type = ValueType.link
         return value_type
 
+    def get_coordinates(self, position: Union[str, tuple[int, int]]) -> tuple[int, int]:
+        """Get coordinates."""
+        if isinstance(position, tuple):
+            column, row = position
+        else:
+            match = re.match(r"(?P<column>[A-Z]{1,3})(?P<row>\d+)$", position)
+            if match is None:
+                raise InvalidCellPosition(position)
+            columns, row = match.group("column"), match.group("row")
+            num = 0
+            for c in columns:
+                num = num * 26 + (ord(c) - 65) + 1
+            column = num - 1
+            row = int(row) - 1
+        # https://wiki.documentfoundation.org/Faq/Calc/022
+        if not (-1 < column < 0x4000 and -1 < row < 2**20):
+            raise CellPositionOutOfRange(position)
+        return column, row
+
     def set_cell_value(
-            self, row: int, column: int, value: Union[str, int, float], value_type: Optional[ValueType] = None
+            self, position: Union[str, tuple[int, int]],
+            value: Union[str, int, float],
+            value_type: Optional[ValueType] = None
     ) -> None:
         """Set cell value."""
-        print("=-" * 60)
-        print(row, column)
+        column, row = self.get_coordinates(position)
+        print(":", position, column, row)
         if value_type is None:
             value_type = self.resolve_value_type(value)
         print("value:", repr(value), "value_type:", value_type)
