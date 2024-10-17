@@ -3,7 +3,7 @@ import time
 import xml.etree.ElementTree as ET
 import zipfile
 
-from .calc import Sheet
+from .calc import Calc as CalcContent
 from .content import Content, FileEntry
 from .exceptions import UnexpectedMimetype
 from .manifest import Manifest
@@ -89,7 +89,7 @@ class Calc(OpenDocument):
 
     def __init__(self):
         super().__init__()
-        self.content = Sheet(self)
+        self.content = CalcContent(self)
 
 
 class Write(OpenDocument):

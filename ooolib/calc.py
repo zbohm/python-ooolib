@@ -7,7 +7,7 @@ from .exceptions import ElementNotFound
 from .spreadsheet import Spreadsheet
 
 
-class Sheet(Content):
+class Calc(Content):
 
     default_list_name = "List"
 
