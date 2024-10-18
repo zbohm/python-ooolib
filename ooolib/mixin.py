@@ -44,7 +44,12 @@ class RootMixin:
 
     def qname(self, prefix_and_name: str) -> str:
         """Create qualified xml element name."""
-        prefix, name = prefix_and_name.split(":")
+        parts = prefix_and_name.split(":", 1)
+        if len(parts) == 1:
+            return parts[0]
+        prefix, name = parts
+        if prefix == "xmlns":
+            return prefix_and_name
         return str(ET.QName(self.ns[prefix], name))
 
     def root_find(self, name: str) -> Element:
@@ -54,14 +59,18 @@ class RootMixin:
             raise ElementNotFound(name)
         return node
 
-    def set_descendant_element_value(self, parent_and_name: str, value: str) -> None:
-        """Set value to the element of 'prefix:parent/prefix:name'."""
-        element = self.root.find(parent_and_name, self.ns)
-        if element is None:
-            ancestor, name = parent_and_name.rsplit('/', 1)
-            parent = self.root_find(ancestor)
-            element = ET.SubElement(parent, self.qname(name))
-        element.text = value
+    def create_element(
+            self,
+            name: str,
+            attrs: Optional[dict[str, str]] = None,
+            value: Optional[Union[str, int, float]] = None
+    ) -> Element:
+        """Create element."""
+        attributes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
+        element = ET.Element(self.qname(name), attributes)
+        if value is not None:
+            element.text = str(value)
+        return element
 
     def create_sub_element(
             self,
@@ -71,11 +80,20 @@ class RootMixin:
             value: Optional[Union[str, int, float]] = None
     ) -> Element:
         """Create sub element."""
-        attibutes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
-        element = ET.SubElement(parent, self.qname(name), attibutes)
+        attributes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
+        element = ET.SubElement(parent, self.qname(name), attributes)
         if value is not None:
             element.text = str(value)
         return element
+
+    def set_descendant_element_value(self, parent_and_name: str, value: str) -> None:
+        """Set value to the element of 'prefix:parent/prefix:name'."""
+        element = self.root.find(parent_and_name, self.ns)
+        if element is None:
+            ancestor, name = parent_and_name.rsplit('/', 1)
+            parent = self.root_find(ancestor)
+            element = self.create_sub_element(parent, name)
+        element.text = value
 
 
 class FileEntryMixin(BaseMixin):

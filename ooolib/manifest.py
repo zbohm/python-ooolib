@@ -11,16 +11,14 @@ class Manifest(OpenDocumentMixin):
 
     def create(self) -> Element:
         """Create manifest."""
-        root = ET.Element(self.qname('manifest:manifest'), {
-            "manifest:version": self.version,
-        })
-        ET.SubElement(root, self.qname("manifest:file-entry"), {
+        root = self.create_element("manifest:manifest", {"office:version": self.version})
+        self.create_sub_element(root, 'manifest:file-entry', {
             "manifest:full-path": "/",
             "manifest:media-type": "application/vnd.oasis.opendocument.spreadsheet",
             "manifest:version": self.version,
         })
         for entry in self.document.payload.values():
-            ET.SubElement(root, self.qname("manifest:file-entry"), {
+            self.create_sub_element(root, "manifest:file-entry", {
                 "manifest:full-path": entry.filename,
                 "manifest:media-type": entry.mimetype,
             })

@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from datetime import datetime
 from xml.etree.ElementTree import Element
 
@@ -12,13 +11,10 @@ class Meta(OpenDocumentMixin):
 
     def create(self) -> Element:
         """Create meta."""
-        root = ET.Element(self.qname('office:document-meta'), {
-            "office:version": self.version,
-        })
-        meta = ET.SubElement(root, self.qname('office:meta'))
-        creation_date = ET.SubElement(meta, self.qname('meta:creation-date'))
-        creation_date.text = datetime.now().isoformat()
-        ET.SubElement(meta, self.qname('meta:generator'), text=f'ooolib-python=={VERSION}')
+        root = self.create_element("office:document-meta", {"office:version": self.version})
+        meta = self.create_sub_element(root, 'office:meta')
+        self.create_sub_element(meta, "meta:creation-date", value=datetime.now().isoformat())
+        self.create_sub_element(meta, "meta:generator", value=f'ooolib-python=={VERSION}')
         return root
 
     def get_or_create_root(self) -> Element:

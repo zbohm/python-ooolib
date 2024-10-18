@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from typing import Optional
 from xml.etree.ElementTree import Element
 
@@ -13,11 +12,11 @@ class Calc(Content):
 
     def create(self) -> Element:
         """Create content."""
-        root = ET.Element(self.qname('office:document-content'), {
+        root = self.create_element("office:document-content", {
             "xmlns:calcext": self.ns["calcext"],
-            "office:version": self.version,
+            "office:version": self.version
         })
-        ET.SubElement(root, self.qname('office:body'))
+        self.create_sub_element(root, 'office:body')
         self.create_default_sheet(root)
         return root
 
@@ -29,8 +28,8 @@ class Calc(Content):
         sheets = body.findall("office:spreadsheet", self.ns)
         if name is None:
             name = f"{self.default_list_name}{len(sheets) + 1}"
-        sheet = ET.SubElement(body, self.qname('office:spreadsheet'))
-        ET.SubElement(sheet, self.qname('table:table'), {self.qname("table:name"): name})
+        sheet = self.create_sub_element(body, 'office:spreadsheet')
+        self.create_sub_element(sheet, 'table:table', {"table:name": name})
         return sheet
 
     def create_sheet(self, name: Optional[str] = None) -> Spreadsheet:

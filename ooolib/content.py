@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element
 
 from .mixin import FileEntryMixin, OpenDocumentMixin
@@ -14,8 +13,6 @@ class Content(OpenDocumentMixin):
 
     def create(self) -> Element:
         """Create content."""
-        root = ET.Element(self.qname('office:document-content'), {
-            "office:version": self.version,
-        })
-        ET.SubElement(root, self.qname('office:body'))
+        root = self.create_element("office:document-content", {"office:version": self.version})
+        self.create_sub_element(root, "office:body")
         return root
