@@ -4,7 +4,7 @@ from typing import Optional, Union
 from xml.etree.ElementTree import Element
 
 from .exceptions import CellPositionOutOfRange, InvalidCellPosition
-from .mixin import RootMixin
+from .mixin import RootMixin, attrsType, valueType
 
 
 @unique
@@ -48,7 +48,7 @@ class Spreadsheet(RootMixin):
                         columns += int(repeated)
         return rows, columns
 
-    def resolve_value_type(self, value: Union[str, int, float]) -> ValueType:
+    def resolve_value_type(self, value: valueType) -> ValueType:
         """Resolve value type."""
         value_type = ValueType.string
         if isinstance(value, (int, float)):
@@ -93,13 +93,13 @@ class Spreadsheet(RootMixin):
                 break  # == find cell; > insert row before
         return self.get_or_create_element(self.root, "table:table-row")  # TODO:
 
-    def get_or_create_cell(self, row: Element, selected_cell: int, attrs: Optional[dict[str, str]] = None) -> Element:
+    def get_or_create_cell(self, row: Element, selected_cell: int, attrs: Optional[attrsType] = None) -> Element:
         """Get or create cell."""
         return self.get_or_create_element(row, "table:table-cell", attrs)  # TODO:
 
     def set_cell_value(
             self, position: Union[str, tuple[int, int]],
-            value: Union[str, int, float],
+            value: valueType,
             value_type: Optional[ValueType] = None
     ) -> None:
         """Set cell value."""

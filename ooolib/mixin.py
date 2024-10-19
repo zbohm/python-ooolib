@@ -7,6 +7,9 @@ from xml.etree.ElementTree import Element
 from .exceptions import ElementNotFound
 
 localtimeType = tuple[int, int, int, int, int, int]  # year, month, day, hour, min, sec
+attrsType = dict[str, str]
+valueType = Union[str, int, float]
+
 
 if TYPE_CHECKING:
     from .document import OpenDocument
@@ -62,8 +65,8 @@ class RootMixin:
     def create_element(
             self,
             name: str,
-            attrs: Optional[dict[str, str]] = None,
-            value: Optional[Union[str, int, float]] = None
+            attrs: Optional[attrsType] = None,
+            value: Optional[valueType] = None,
     ) -> Element:
         """Create element."""
         attributes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
@@ -76,8 +79,8 @@ class RootMixin:
             self,
             parent: Element,
             name: str,
-            attrs: Optional[dict[str, str]] = None,
-            value: Optional[Union[str, int, float]] = None
+            attrs: Optional[attrsType] = None,
+            value: Optional[valueType] = None,
     ) -> Element:
         """Create sub element."""
         attributes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
@@ -90,8 +93,8 @@ class RootMixin:
             self,
             parent: Element,
             name: str,
-            attrs: Optional[dict[str, str]] = None,
-            value: Optional[Union[str, int, float]] = None
+            attrs: Optional[attrsType] = None,
+            value: Optional[valueType] = None,
     ) -> Element:
         """Get or create element."""
         element = parent.find(name, self.ns)
