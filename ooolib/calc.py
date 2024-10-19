@@ -16,20 +16,62 @@ class Calc(Content):
             "xmlns:calcext": self.ns["calcext"],
             "office:version": self.version
         })
-        self.create_sub_element(root, 'office:body')
         self.create_default_sheet(root)
         return root
 
+    def create_automatic_styles(self, root: Element) -> None:
+        """Create automatic styles."""
+        automatic_styles = self.create_sub_element(root, 'office:automatic-styles')
+        style = self.create_sub_element(automatic_styles, 'style:style', {
+            "style:name": "co1",
+            "style:family": "table-column",
+        })
+        self.create_sub_element(style, 'style:table-column-properties', {
+            "fo:break-before": "auto",
+            "style:column-width": "2.258cm",
+        })
+        style = self.create_sub_element(automatic_styles, 'style:style', {
+            "style:name": "ro1",
+            "style:family": "table-row",
+        })
+        self.create_sub_element(style, 'style:table-row-properties', {
+            "style:row-height": "0.452cm",
+            "fo:break-before": "auto",
+            "style:use-optimal-row-height": "true",
+        })
+        style = self.create_sub_element(automatic_styles, 'style:style', {
+            "style:name": "ta1",
+            "style:family": "table",
+            "style:master-page-name": "Default",
+        })
+        self.create_sub_element(style, 'style:table-properties', {
+            "table:display": "true",
+            "style:writing-mode": "lr-tb",
+        })
+
     def create_default_sheet(self, root: Element, name: Optional[str] = None) -> Element:
         """Create default sheet."""
-        body = root.find("office:body", self.ns)
-        if body is None:
-            raise ElementNotFound("office:body")
+        self.create_automatic_styles(root)
+        body = self.create_sub_element(root, 'office:body')
         sheets = body.findall("office:spreadsheet", self.ns)
         if name is None:
             name = f"{self.default_list_name}{len(sheets) + 1}"
         sheet = self.create_sub_element(body, 'office:spreadsheet')
-        self.create_sub_element(sheet, 'table:table', {"table:name": name})
+        self.create_sub_element(sheet, 'table:calculation-settings', {
+            "table:automatic-find-labels": "false",
+            "table:use-regular-expressions": "false",
+            "table:use-wildcards": "true",
+        })
+        table = self.create_sub_element(sheet, 'table:table', {
+            "table:name": name,
+            "table:style-name": "ta1",
+        })
+        self.create_sub_element(sheet, "table:named-expressions")
+        self.create_sub_element(table, 'table:table-column', {
+            "table:style-name": "co1", "table:default-cell-style-name": "Default",
+        })
+        row = self.create_sub_element(table, 'table:table-row', {"table:style-name": "ro1"})
+        self.create_sub_element(row, 'table:table-cell')
         return sheet
 
     def create_sheet(self, name: Optional[str] = None) -> Spreadsheet:
