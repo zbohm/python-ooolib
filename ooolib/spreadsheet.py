@@ -81,7 +81,8 @@ class Spreadsheet(RootMixin):
     def get_or_create_row(self, selected_row: int) -> Element:
         """Get or create row."""
         position = 0
-        for table_row in self.root.findall('table:table/table:table-row', self.ns):
+        table = self.root_find("table:table")
+        for table_row in table.findall('table:table-row', self.ns):
             repeated = table_row.get(self.qname("table:number-rows-repeated"))
             if repeated is None:
                 position += 1
@@ -91,7 +92,7 @@ class Spreadsheet(RootMixin):
                 return table_row
             if position > selected_row:
                 break  # == find cell; > insert row before
-        return self.get_or_create_element(self.root, "table:table-row")  # TODO:
+        return self.get_or_create_element(table, "table:table-row")  # TODO:
 
     def get_or_create_cell(self, row: Element, selected_cell: int, attrs: Optional[attrsType] = None) -> Element:
         """Get or create cell."""
