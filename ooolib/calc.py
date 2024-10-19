@@ -13,7 +13,9 @@ class Calc(Content):
     def create(self) -> Element:
         """Create content."""
         root = self.create_element("office:document-content", {"office:version": self.version})
-        self.create_default_sheet(root)
+        self.create_automatic_styles(root)
+        body = self.create_sub_element(root, 'office:body')
+        self.create_body_sheet(body)
         return root
 
     def create_automatic_styles(self, root: Element) -> None:
@@ -46,10 +48,8 @@ class Calc(Content):
             "style:writing-mode": "lr-tb",
         })
 
-    def create_default_sheet(self, root: Element, name: Optional[str] = None) -> Element:
+    def create_body_sheet(self, body: Element, name: Optional[str] = None) -> Element:
         """Create default sheet."""
-        self.create_automatic_styles(root)
-        body = self.create_sub_element(root, 'office:body')
         sheets = body.findall("office:spreadsheet", self.ns)
         if name is None:
             name = f"{self.default_list_name}{len(sheets) + 1}"
@@ -73,7 +73,7 @@ class Calc(Content):
 
     def create_sheet(self, name: Optional[str] = None) -> Spreadsheet:
         """Create sheet."""
-        return Spreadsheet(self.create_default_sheet(self.get_or_create_root(), name))
+        return Spreadsheet(self.create_body_sheet(self.root_find("office:body"), name))
 
     def get_sheet(self, position: int = 0) -> Spreadsheet:
         """Get sheet."""
