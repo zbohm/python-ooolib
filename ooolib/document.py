@@ -27,7 +27,7 @@ class OpenDocument(BaseMixin):
         self.content = Content(self)
         self.payload: dict[str, FileEntry] = dict()
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         return getattr(self.content, name)
 
     def get_default_payload(self):
@@ -43,7 +43,6 @@ class OpenDocument(BaseMixin):
     def load(self, filename: str) -> None:
         """Load document from filename."""
         handle = zipfile.ZipFile(filename)
-        payload = self.get_default_payload()
         try:
             mimetype = handle.read("mimetype").decode("utf-8")
             if self.mimetype is None:
@@ -51,6 +50,7 @@ class OpenDocument(BaseMixin):
             else:
                 if self.mimetype != mimetype:
                     raise UnexpectedMimetype(mimetype)
+            payload = self.get_default_payload()
             manifest = payload.pop(self.manifest.filename)
             manifest.read(handle)
             self.payload[manifest.filename] = manifest
@@ -68,10 +68,10 @@ class OpenDocument(BaseMixin):
         """Save document into filename."""
         for name, uri in self.meta.ns.items():
             ET.register_namespace(name, uri)
-        localtime = time.localtime()[:6]
-        handle = zipfile.ZipFile(filename, "w")
         if not self.payload:
             self.payload = self.get_default_payload()
+        localtime = time.localtime()[:6]
+        handle = zipfile.ZipFile(filename, "w")
         try:
             self.write_content(handle, localtime, "mimetype", self.mimetype.encode())
             for entry in self.payload.values():
