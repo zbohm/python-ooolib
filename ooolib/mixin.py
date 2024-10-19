@@ -86,6 +86,23 @@ class RootMixin:
             element.text = str(value)
         return element
 
+    def get_or_create_element(
+            self,
+            parent: Element,
+            name: str,
+            attrs: Optional[dict[str, str]] = None,
+            value: Optional[Union[str, int, float]] = None
+    ) -> Element:
+        """Get or create element."""
+        element = parent.find(name, self.ns)
+        if element is None:
+            return self.create_sub_element(parent, name, attrs, value)
+        else:
+            if attrs is not None:
+                for key, value in attrs.items():
+                    element.set(self.qname(key), value)
+        return element
+
     def set_descendant_element_value(self, parent_and_name: str, value: str) -> None:
         """Set value to the element of 'prefix:parent/prefix:name'."""
         element = self.root.find(parent_and_name, self.ns)

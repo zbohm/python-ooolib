@@ -12,10 +12,7 @@ class Calc(Content):
 
     def create(self) -> Element:
         """Create content."""
-        root = self.create_element("office:document-content", {
-            "xmlns:calcext": self.ns["calcext"],
-            "office:version": self.version
-        })
+        root = self.create_element("office:document-content", {"office:version": self.version})
         self.create_default_sheet(root)
         return root
 

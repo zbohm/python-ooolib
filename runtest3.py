@@ -4,13 +4,13 @@ from ooolib.document import Calc
 
 calc = Calc()
 
-
 sheet = calc.get_sheet()
 # print("Boundary:", sheet.boundary)
 
-sheet.set_cell_value("A1", "test")
+sheet.set_cell_value("A1", "one")
 
-ET.dump(sheet.root)
+calc.save("/tmp/devel.ods")
+# ET.dump(sheet.root)
 # ./runtest3.py | xmllint --encode utf8 --format -
 
 # calc.debug_cells()

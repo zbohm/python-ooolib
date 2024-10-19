@@ -78,30 +78,24 @@ class Spreadsheet(RootMixin):
             raise CellPositionOutOfRange(position)
         return column, row
 
-    def find_row(self, selected_row: int) -> tuple[int, Optional[Element]]:
-        """Find row."""
-        position_row, table_row = 0, None
+    def get_or_create_row(self, selected_row: int) -> Element:
+        """Get or create row."""
+        position = 0
         for table_row in self.root.findall('table:table/table:table-row', self.ns):
             repeated = table_row.get(self.qname("table:number-rows-repeated"))
             if repeated is None:
-                position_row += 1
+                position += 1
             else:
-                position_row += int(repeated)
-            if position_row >= selected_row:
+                position += int(repeated)
+            if position == selected_row:
+                return table_row
+            if position > selected_row:
                 break  # == find cell; > insert row before
-        return position_row, table_row
+        return self.get_or_create_element(self.root, "table:table-row")  # TODO:
 
-    def create_row(self) -> Element:
-        """Create row."""
-        return self.create_sub_element(self.root_find('table:table'), "table:table")
-
-    def create_cell(self, parent: Element, attrs: Optional[dict[str, str]] = None) -> Element:
-        """Create cell."""
-        return self.create_sub_element(parent, "table:table-cell", attrs)
-
-    def create_text_p(self, parent: Element, value: str):
-        """Create text paragraph."""
-        return self.create_sub_element(parent, "text:p", {}, value)
+    def get_or_create_cell(self, row: Element, selected_cell: int, attrs: Optional[dict[str, str]] = None) -> Element:
+        """Get or create cell."""
+        return self.get_or_create_element(row, "table:table-cell", attrs)  # TODO:
 
     def set_cell_value(
             self, position: Union[str, tuple[int, int]],
@@ -110,10 +104,11 @@ class Spreadsheet(RootMixin):
     ) -> None:
         """Set cell value."""
         selected_column, selected_row = self.get_coordinates(position)
+        row = self.get_or_create_row(selected_row)
         if value_type is None:
             value_type = self.resolve_value_type(value)
-        position_row, table_row = self.find_row(selected_row)
-        if table_row is None:
-            element_row = self.create_row()
-            cell = self.create_cell(element_row, {"office:value-type": value_type.value})
-            self.create_text_p(cell, str(value))
+        cell = self.get_or_create_cell(row, selected_column, {
+            "office:value-type": value_type.value,
+            "calcext:value-type": value_type.value,
+        })
+        self.get_or_create_element(cell, "text:p", value=str(value))
