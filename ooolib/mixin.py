@@ -1,3 +1,4 @@
+import re
 import xml.etree.ElementTree as ET
 import zipfile
 from io import BytesIO
@@ -55,12 +56,21 @@ class RootMixin:
             return prefix_and_name
         return str(ET.QName(self.ns[prefix], name))
 
+    def lname(self, qualified_name: str) -> str:
+        """Get local name."""
+        return re.sub(r"^\{.+?\}", "", qualified_name)
+
     def root_find(self, name: str) -> Element:
         """Find in root element."""
         node = self.root.find(name, self.ns)
         if node is None:
             raise ElementNotFound(name)
         return node
+
+    def set_attrs(self, element: Element, attrs: attrsType) -> None:
+        """Set element attributes."""
+        for key, value in attrs.items():
+            element.set(self.qname(key), value)
 
     def create_element(
             self,

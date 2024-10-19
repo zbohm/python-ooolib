@@ -78,6 +78,23 @@ class Spreadsheet(RootMixin):
             raise CellPositionOutOfRange(position)
         return column, row
 
+    def append_rows(self, gap: int, table: Element, table_row: Element) -> None:
+        """Append rows."""
+        repeated = str(gap)
+        attrs = {"table:number-rows-repeated": repeated}
+        cells = table_row.findall("table:*", self.ns)
+        if len(cells) == 1:
+            cell = cells[0]
+            if cell is None or self.lname(cell.tag) not in ("table-cell", "covered-table-cell"):
+                self.create_sub_element(table, "table:table-row", attrs)
+            else:
+                if cell.find("*") is None:
+                    self.set_attrs(table_row, {"table:number-rows-repeated": repeated})
+                else:
+                    self.create_sub_element(table, "table:table-row", attrs)
+        else:
+            self.create_sub_element(table, "table:table-row", attrs)
+
     def get_or_create_row(self, selected_row: int) -> Element:
         """Get or create row."""
         position = 0
@@ -92,7 +109,10 @@ class Spreadsheet(RootMixin):
                 return table_row
             if position > selected_row:
                 break  # == find cell; > insert row before
-        return self.get_or_create_element(table, "table:table-row")  # TODO:
+        gap = selected_row - position
+        if gap > 1:
+            self.append_rows(gap, table, table_row)
+        return self.create_sub_element(table, "table:table-row")
 
     def get_or_create_cell(self, row: Element, selected_cell: int, attrs: Optional[attrsType] = None) -> Element:
         """Get or create cell."""
@@ -108,8 +128,11 @@ class Spreadsheet(RootMixin):
         row = self.get_or_create_row(selected_row)
         if value_type is None:
             value_type = self.resolve_value_type(value)
-        cell = self.get_or_create_cell(row, selected_column, {
+        attrs = {
             "office:value-type": value_type.value,
             "calcext:value-type": value_type.value,
-        })
+        }
+        if value_type == ValueType.float:
+            attrs["office:value"] = str(value)
+        cell = self.get_or_create_cell(row, selected_column, attrs)
         self.get_or_create_element(cell, "text:p", value=str(value))
