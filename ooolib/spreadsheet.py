@@ -107,21 +107,43 @@ class Spreadsheet(RootMixin):
         #     # row with more cells - so create new row
         #     self.create_sub_element(table, "table:table-row", attrs)
 
-    def insert_rows(
+    def insert_rows1(
             self,
             position: int,
-            rowsnum: int,
+            rows_before: int,
+            rows_after: int,
             selected_row: int,
             table: Element,
             table_row: Element
     ) -> Element:
         """Append rows."""
-        gap = rowsnum - selected_row
+        gap = rows_after - selected_row
         # pprint(ET.tostring(ET.indent(table)).decode("utf8"))
-        ET.indent(table)
-        ET.dump(table)
+        # ET.indent(table)
+        # ET.dump(table)
         ET.dump(table_row)
-        print("position:", position, "rowsnum:", rowsnum, "selected_row:", selected_row, "gap:", gap)
+        print("position:", position, "rows_before:", rows_before, "rows_after:", rows_after, "selected_row:", selected_row, "gap:", gap)
+        if rows_before:
+            arttrs = {"vlozeno": "pred-pole"} if rows_before == 1 else {"table:number-rows-repeated": str(rows_before), "vlozeno": "pred-pole"}
+            row_before = self.create_element("table:table-row", arttrs)
+            self.create_sub_element(row_before, "table:table-cell")
+            table.insert(position + 1, row_before)
+            position += 1
+
+            row = self.create_element("table:table-row", {"vlozeno": "ano"})
+            table.insert(position + 1, row)
+
+            repeated = table_row.get(self.qname("table:number-rows-repeated"))
+            print("repeated:", repeated)
+            if repeated is None:
+                pass
+            else:
+                lines = int(repeated)
+                remains = lines - selected_row + 1
+                print("!!! remains:", remains)
+                self.set_attrs(table_row, {"table:number-rows-repeated": str(remains)})
+            return row
+
         repeated = table_row.get(self.qname("table:number-rows-repeated"))
         print("repeated:", repeated)
         if repeated is None:
@@ -130,9 +152,9 @@ class Spreadsheet(RootMixin):
             table.insert(position, row)
         else:
             lines = int(repeated)
-            print("lines:", lines)
             remains = lines - gap - 1
-            print("remains:", remains)
+            print("remains:", remains, " = repeated:", lines, " - gap:", gap)
+
             if remains == 0:
                 table_row.attrib.pop(self.qname("table:number-rows-repeated"))
                 end = lines - remains - 1
@@ -170,30 +192,76 @@ class Spreadsheet(RootMixin):
         ET.dump(table_row)
         if repeated is None:
             return table_row
-        row = self.create_element("table:table-row", {"vlozeno": "ano", "position": str(position)})
-        print("!+2" * 30)
+        self.set_attrs(table_row, {"table:number-rows-repeated": str(int(repeated) - 1), "vlozeno": "equal_row repeated - 1"})
+        row = self.create_element("table:table-row", {"vlozeno": "equal_row", "position": str(position)})
         table.insert(position + 2, row)
+        return row
+
+    def insert_rows(
+            self,
+            position: int,
+            rows_before: int,
+            rows_after: int,
+            selected_row: int,
+            table: Element,
+            table_row: Element
+    ) -> Element:
+        """Append rows."""
+        ET.dump(table_row)
+        print("position:", position, "rows_before:", rows_before, "rows_after:", rows_after, "selected_row:", selected_row)
+        before = selected_row - rows_before - 1
+        after = rows_after - selected_row
+        print("before:", before, "after:", after)
+
+        if before:
+            attrs = {"vlozeno": "before == 1"} if before == 1 else {"table:number-rows-repeated": str(before), "vlozeno": "before vetsi 1"}
+            row_before = self.create_element("table:table-row", attrs)
+            self.create_sub_element(row_before, "table:table-cell")
+            position += 1
+            table.insert(position, row_before)
+
+        row = self.create_element("table:table-row", {"vlozeno": "hodnota"})
+        # self.create_sub_element(row, "table:table-cell")
+        position += 1
+        table.insert(position, row)
+
+        if after:
+            # attrs = {"vlozeno": "after == 1"} if after == 1 else {"table:number-rows-repeated": str(after), "vlozeno": "after vetsi 1"}
+            repeated = table_row.get(self.qname("table:number-rows-repeated"))
+            print("repeated:", repeated)
+            if repeated is None:
+                pass
+            else:
+                if after == 1:
+                    table_row.attrib.pop(self.qname("table:number-rows-repeated"))
+                else:
+                    self.set_attrs(table_row, {"table:number-rows-repeated": str(after), "vlozeno": "after vetsi 1"})
+
         return row
 
     def get_or_create_row(self, selected_row: int) -> Element:
         """Get or create row."""
-        rowsnum = 0
+        rows_before, rows_after = 0, 0
         table = self.root_find("table:table")
         for position, table_row in enumerate(table.findall('table:table-row', self.ns)):
             repeated = table_row.get(self.qname("table:number-rows-repeated"))
             # print("repeated:", repeated)
             if repeated is None:
-                rowsnum += 1
+                rows_after += 1
             else:
-                rowsnum += int(repeated)
+                rows_after += int(repeated)
             # print("position:", position, "rowsnum:", rowsnum, "selected_row:", selected_row)
-            if rowsnum == selected_row:
+            if rows_after == selected_row:
                 print("=" * 60)
                 return self.equal_row(position, table, table_row)
-            if rowsnum > selected_row:
+            if rows_after > selected_row:
                 print(">" * 60)
-                return self.insert_rows(position, rowsnum, selected_row, table, table_row)
-        gap = selected_row - rowsnum
+                return self.insert_rows(position, rows_before, rows_after, selected_row, table, table_row)
+            if repeated is None:
+                rows_before += 1
+            else:
+                rows_before += int(repeated)
+        gap = selected_row - rows_after
         if gap > 1:
             self.append_rows(gap, table, table_row)
         return self.create_sub_element(table, "table:table-row")
@@ -212,7 +280,7 @@ class Spreadsheet(RootMixin):
         ET.dump(self.root)
         print("." * 60)
         selected_column, selected_row = self.get_coordinates(position)
-        row = self.get_or_create_row(selected_row)
+
         if value_type is None:
             value_type = self.resolve_value_type(value)
         attrs = {
@@ -221,7 +289,11 @@ class Spreadsheet(RootMixin):
         }
         if value_type == ValueType.float:
             attrs["office:value"] = str(value)
+
+        row = self.get_or_create_row(selected_row)
+
         cell = self.get_or_create_cell(row, selected_column, attrs)
         self.get_or_create_element(cell, "text:p", value=str(value))
+
         ET.indent(self.root)
         ET.dump(self.root)
