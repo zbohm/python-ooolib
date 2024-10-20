@@ -79,6 +79,17 @@ class Spreadsheet(RootMixin):
             raise CellPositionOutOfRange(position)
         return column, row
 
+    def find_cells_or_covered(self, row: Element) -> list[Element]:
+        """Find cells of covered cells."""
+        # It would be better to use xpath query "table:table-cell|table:covered-table-cell",
+        # but the ET has not yet implemented this feature.
+        # Module lxml has it implemented, but there would be a dependency on it.
+        cells = []
+        for cell in row.findall("table:*", self.ns):
+            if self.lname(cell.tag) in ("table-cell", "covered-table-cell"):
+                cells.append(cell)
+        return cells
+
     def append_rows(self, gap: int, table: Element, table_row: Element) -> None:
         """Append rows with the attribute number-rows-repeated."""
         repeated = str(gap)
