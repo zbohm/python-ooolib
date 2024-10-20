@@ -37,7 +37,7 @@ class Spreadsheet(RootMixin):
                 rows += int(repeated)
             if count_columns:
                 count_columns = False  # count only once
-                for cell in row.findall("table:table-cell", self.ns):
+                for cell in self.find_cells_or_covered(row):
                     repeated = cell.get(self.qname("table:number-columns-repeated"))
                     if repeated is None:
                         spanned = cell.get(self.qname("table:number-columns-spanned"))
@@ -201,7 +201,7 @@ class Spreadsheet(RootMixin):
         }
         if value_type == ValueType.float:
             attrs["office:value"] = str(value)
-        cell = self.get_or_create_element(row, "table:table-cell", attrs)
+        cell = self.get_or_create_element(row, "table:table-cell", attrs, alternate_name="table:covered-table-cell")
         if value_type != ValueType.float:
             cell.attrib.pop(self.qname("office:value"))
         return cell

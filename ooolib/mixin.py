@@ -105,9 +105,12 @@ class RootMixin:
             name: str,
             attrs: Optional[attrsType] = None,
             value: Optional[valueType] = None,
+            alternate_name: Optional[str] = None,
     ) -> Element:
         """Get or create element."""
         element = parent.find(name, self.ns)
+        if element is None:
+            element = parent.find(alternate_name, self.ns)
         if element is None:
             return self.create_sub_element(parent, name, attrs, value)
         else:
