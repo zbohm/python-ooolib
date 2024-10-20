@@ -112,8 +112,10 @@ class RootMixin:
             return self.create_sub_element(parent, name, attrs, value)
         else:
             if attrs is not None:
-                for key, value in attrs.items():
-                    element.set(self.qname(key), value)
+                for key, val in attrs.items():
+                    element.set(self.qname(key), val)
+            if value is not None:
+                element.text = str(value)
         return element
 
     def set_descendant_element_value(self, parent_and_name: str, value: str) -> None:

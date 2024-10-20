@@ -252,7 +252,7 @@ class Spreadsheet(RootMixin):
                 rows_after += int(repeated)
             # print("position:", position, "rowsnum:", rowsnum, "selected_row:", selected_row)
             if rows_after == selected_row:
-                print("=" * 60)
+                print("=== EQUAL", "=" * 60)
                 return self.equal_row(position, table, table_row)
             if rows_after > selected_row:
                 print(">" * 60)
@@ -266,7 +266,7 @@ class Spreadsheet(RootMixin):
             self.append_rows(gap, table, table_row)
         return self.create_sub_element(table, "table:table-row")
 
-    def get_or_create_cell(self, row: Element, selected_cell: int, attrs: Optional[attrsType] = None) -> Element:
+    def get_or_create_cell(self, row: Element, selected_column: int, attrs: Optional[attrsType] = None) -> Element:
         """Get or create cell."""
         return self.get_or_create_element(row, "table:table-cell", attrs)  # TODO:
 
