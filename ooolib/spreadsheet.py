@@ -5,7 +5,7 @@ from typing import Optional, Union
 from xml.etree.ElementTree import Element
 
 from .exceptions import CellPositionOutOfRange, InvalidCellPosition
-from .mixin import RootMixin, attrsType, valueType
+from .mixin import RootMixin, valueType
 
 
 @unique
@@ -100,7 +100,8 @@ class Spreadsheet(RootMixin):
         ET.dump(table_row)
         if repeated is None:
             return table_row
-        self.set_attrs(table_row, {"table:number-rows-repeated": str(int(repeated) - 1), "vlozeno": "equal_row repeated - 1"})
+        self.set_attrs(table_row, {"table:number-rows-repeated": str(int(repeated) - 1),
+                                   "vlozeno": "equal_row repeated - 1"})
         row = self.create_element("table:table-row", {"vlozeno": "equal_row", "position": str(position)})
         table.insert(position + 2, row)
         return row
@@ -116,13 +117,15 @@ class Spreadsheet(RootMixin):
     ) -> Element:
         """Append rows."""
         ET.dump(table_row)
-        print("position:", position, "rows_before:", rows_before, "rows_after:", rows_after, "selected_row:", selected_row)
+        print("position:", position, "rows_before:", rows_before, "rows_after:", rows_after,
+              "selected_row:", selected_row)
         before = selected_row - rows_before - 1
         after = rows_after - selected_row
         print("before:", before, "after:", after)
 
         if before:
-            attrs = {"vlozeno": "before == 1"} if before == 1 else {"table:number-rows-repeated": str(before), "vlozeno": "before vetsi 1"}
+            attrs = {"vlozeno": "before == 1"} if before == 1 else {"table:number-rows-repeated": str(before),
+                                                                    "vlozeno": "before vetsi 1"}
             row_before = self.create_element("table:table-row", attrs)
             self.create_sub_element(row_before, "table:table-cell")
             position += 1
@@ -173,9 +176,24 @@ class Spreadsheet(RootMixin):
             self.append_rows(gap, table, table_row)
         return self.create_sub_element(table, "table:table-row")
 
-    def get_or_create_cell(self, row: Element, selected_column: int, attrs: Optional[attrsType] = None) -> Element:
+    def get_or_create_cell(
+            self,
+            row: Element,
+            selected_column: int,
+            value: valueType,
+            value_type: ValueType
+    ) -> Element:
         """Get or create cell."""
-        return self.get_or_create_element(row, "table:table-cell", attrs)  # TODO:
+        attrs = {
+            "office:value-type": value_type.value,
+            "calcext:value-type": value_type.value,
+        }
+        if value_type == ValueType.float:
+            attrs["office:value"] = str(value)
+        cell = self.get_or_create_element(row, "table:table-cell", attrs)
+        if value_type != ValueType.float:
+            cell.attrib.pop(self.qname("office:value"))
+        return cell
 
     def set_cell_value(
             self, position: Union[str, tuple[int, int]],
@@ -188,19 +206,13 @@ class Spreadsheet(RootMixin):
         print("." * 60)
         selected_column, selected_row = self.get_coordinates(position)
 
-        if value_type is None:
-            value_type = self.resolve_value_type(value)
-        attrs = {
-            "office:value-type": value_type.value,
-            "calcext:value-type": value_type.value,
-        }
-        if value_type == ValueType.float:
-            attrs["office:value"] = str(value)
-
         row = self.get_or_create_row(selected_row)
 
-        cell = self.get_or_create_cell(row, selected_column, attrs)
-        self.get_or_create_element(cell, "text:p", value=str(value))
+        if value_type is None:
+            value_type = self.resolve_value_type(value)
+
+        cell = self.get_or_create_cell(row, selected_column, value, value_type)
+        self.get_or_create_element(cell, "text:p", value=value)
 
         ET.indent(self.root)
         ET.dump(self.root)
