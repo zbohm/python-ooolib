@@ -109,7 +109,7 @@ class RootMixin:
     ) -> Element:
         """Get or create element."""
         element = parent.find(name, self.ns)
-        if element is None:
+        if element is None and alternate_name is not None:
             element = parent.find(alternate_name, self.ns)
         if element is None:
             return self.create_sub_element(parent, name, attrs, value)
