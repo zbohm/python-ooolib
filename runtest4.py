@@ -11,7 +11,13 @@ calc = Calc()
 calc.load(Path().home().joinpath('tests').joinpath('columns.ods'))
 
 sheet = calc.get_sheet()
-sheet.set_cell_value("E1", "echt")
+# sheet.set_cell_value("E1", "echt")
+
+sheet.set_cell_value("A1", "aaa")
+# sheet.set_cell_value("B1", "bbb")
+# sheet.set_cell_value("C1", "ccc")
+# sheet.set_cell_value("D1", "ddd")
+
 # sheet.set_cell_value("A2", 2)
 # sheet.set_cell_value("A3", 3)
 # sheet.set_cell_value("A4", 4)
@@ -25,5 +31,7 @@ sheet.set_cell_value("E1", "echt")
 # sheet.set_cell_value("A12", 12)
 # sheet.set_cell_value("A13", 13)
 # sheet.set_cell_value("A20", 20)
+
+print("Boundary:", sheet.get_boundary())
 
 calc.save(Path().home().joinpath('tests').joinpath('debug.ods'))

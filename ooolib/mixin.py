@@ -8,8 +8,8 @@ from xml.etree.ElementTree import Element
 from .exceptions import ElementNotFound
 
 localtimeType = tuple[int, int, int, int, int, int]  # year, month, day, hour, min, sec
-attrsType = dict[str, str]
 valueType = Union[str, int, float]
+attrsType = dict[str, str]
 
 
 if TYPE_CHECKING:
@@ -70,7 +70,7 @@ class RootMixin:
     def set_attrs(self, element: Element, attrs: attrsType) -> None:
         """Set element attributes."""
         for key, value in attrs.items():
-            element.set(self.qname(key), value)
+            element.set(self.qname(key), str(value))
 
     def create_element(
             self,
@@ -79,7 +79,7 @@ class RootMixin:
             value: Optional[valueType] = None,
     ) -> Element:
         """Create element."""
-        attributes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
+        attributes = {} if attrs is None else {self.qname(key): str(value) for key, value in attrs.items()}
         element = ET.Element(self.qname(name), attributes)
         if value is not None:
             element.text = str(value)
@@ -93,7 +93,7 @@ class RootMixin:
             value: Optional[valueType] = None,
     ) -> Element:
         """Create sub element."""
-        attributes = {} if attrs is None else {self.qname(key): value for key, value in attrs.items()}
+        attributes = {} if attrs is None else {self.qname(key): str(value) for key, value in attrs.items()}
         element = ET.SubElement(parent, self.qname(name), attributes)
         if value is not None:
             element.text = str(value)
@@ -116,7 +116,7 @@ class RootMixin:
         else:
             if attrs is not None:
                 for key, val in attrs.items():
-                    element.set(self.qname(key), val)
+                    element.set(self.qname(key), str(val))
             if value is not None:
                 element.text = str(value)
         return element
@@ -129,6 +129,24 @@ class RootMixin:
             parent = self.root_find(ancestor)
             element = self.create_sub_element(parent, name)
         element.text = value
+
+    def get_element_attr(self, element: Element, name: str, default: Optional[valueType] = None) -> Optional[valueType]:
+        """Get element attribute."""
+        attribute = cast(Optional[valueType], element.get(self.qname(name)))
+        if attribute is None and default is not None:
+            attribute = default
+        if attribute is not None and default is not None:
+            if isinstance(default, int):
+                return int(attribute)
+            elif isinstance(default, float):
+                return float(attribute)
+        return attribute
+
+    def pop_element_attr(self, element: Element, name: str) -> None:
+        """Pop element attribute."""
+        qname = self.qname(name)
+        if qname in element.attrib:
+            element.attrib.pop(qname)
 
 
 class FileEntryMixin(BaseMixin):
