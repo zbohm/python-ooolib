@@ -9,7 +9,7 @@ from .exceptions import ElementNotFound
 
 localtimeType = tuple[int, int, int, int, int, int]  # year, month, day, hour, min, sec
 valueType = Union[str, int, float]
-attrsType = dict[str, str]
+attrsType = dict[str, valueType]
 
 
 if TYPE_CHECKING:
@@ -141,6 +141,10 @@ class RootMixin:
             elif isinstance(default, float):
                 return float(attribute)
         return attribute
+
+    def set_element_attr(self, element: Element, name: str, value: valueType) -> None:
+        """Set element attribute."""
+        element.set(self.qname(name), str(value))
 
     def pop_element_attr(self, element: Element, name: str) -> None:
         """Pop element attribute."""

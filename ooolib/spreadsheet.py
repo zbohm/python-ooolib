@@ -5,7 +5,7 @@ from typing import Optional, Union
 from xml.etree.ElementTree import Element
 
 from .exceptions import CellPositionOutOfRange, InvalidCellPosition
-from .mixin import RootMixin, valueType
+from .mixin import RootMixin, attrsType, cast, valueType
 
 
 @unique
@@ -55,7 +55,8 @@ class Spreadsheet(RootMixin):
         column = self.root_find("table:table/table:table-column[last()]")
         repeated = column.get(self.qname("table:number-columns-repeated"))
         num = columns + 1 if repeated is None else int(repeated) + columns
-        column.set(self.qname("table:number-columns-repeated"), str(num))
+        # column.set(self.qname("table:number-columns-repeated"), str(num))
+        self.set_element_attr(column, "table:number-columns-repeated", num)
 
     def resolve_value_type(self, value: valueType) -> ValueType:
         """Resolve value type."""
@@ -100,14 +101,13 @@ class Spreadsheet(RootMixin):
 
     def append_rows(self, gap: int, table: Element, table_row: Element, columns: int) -> None:
         """Append rows with the attribute number-rows-repeated."""
-        repeated = str(gap)
-        attrs = {} if gap == 1 else {"table:number-rows-repeated": repeated}
+        attrs = cast(attrsType, {}) if gap == 1 else {"table:number-rows-repeated": gap}
         cells = table_row.findall("table:*", self.ns)
 
         if (len(cells) == 1 and self.lname(cells[0].tag) in ("table-cell", "covered-table-cell")
                 and cells[0].find("*") is None):
             # Row has only one cell and this cell does not have any child - so we can set attribute here.
-            self.set_attrs(table_row, {"table:number-rows-repeated": repeated})
+            self.set_attrs(table_row, {"table:number-rows-repeated": gap})
         else:
             row = self.create_sub_element(table, "table:table-row", attrs)
             self.create_sub_element(row, "table:table-cell")
@@ -128,8 +128,8 @@ class Spreadsheet(RootMixin):
         ET.dump(child)
         if repeated is None:
             return child
-        self.set_attrs(child, {attr_prefix_name: str(int(repeated) - 1), "vlozeno": f"equal_{attr_name} repeated - 1"})
-        row = self.create_element(node_prefix_name, {"vlozeno": f"equal_{node_name}", "position": str(position)})
+        self.set_attrs(child, {attr_prefix_name: int(repeated) - 1, "vlozeno": f"equal_{attr_name} repeated - 1"})
+        row = self.create_element(node_prefix_name, {"vlozeno": f"equal_{node_name}", "position": position})
         parent.insert(position + 2, row)
         return row
 
@@ -180,8 +180,8 @@ class Spreadsheet(RootMixin):
         print("before:", before, "after:", after)
 
         if before:
-            attrs = {"vlozeno": "before == 1"} if before == 1 else {"table:number-rows-repeated": str(before),
-                                                                    "vlozeno": "before vetsi 1"}
+            attrs = cast(attrsType, {"vlozeno": "before == 1"}) if before == 1 else {
+                "table:number-rows-repeated": before, "vlozeno": "before vetsi 1"}
             row_before = self.create_element("table:table-row", attrs)
             self.create_sub_element(row_before, "table:table-cell")
             position += 1
@@ -200,7 +200,7 @@ class Spreadsheet(RootMixin):
                 if after == 1:
                     self.pop_element_attr(table_row, "table:number-rows-repeated")
                 else:
-                    self.set_attrs(table_row, {"table:number-rows-repeated": str(after), "vlozeno": "after vetsi 1"})
+                    self.set_attrs(table_row, {"table:number-rows-repeated": after, "vlozeno": "after vetsi 1"})
 
         return row
 
@@ -229,12 +229,12 @@ class Spreadsheet(RootMixin):
         print("repeated:", repeated)
         # import pdb; pdb.set_trace()  # !!!
         if before:
-            attrs = {} if before == 1 else {"table:number-columns-repeated": str(before)}
+            attrs = cast(attrsType, {}) if before == 1 else {"table:number-columns-repeated": before}
             cell_before = self.create_element("table:table-cell", attrs)
             table_row.insert(position, cell_before)
 
         if after:
-            attrs = {} if after == 1 else {"table:number-columns-repeated": str(after)}
+            attrs = cast(attrsType, {}) if after == 1 else {"table:number-columns-repeated": after}
             cell_after = self.create_element("table:table-cell", attrs)
             table_row.insert(position + 1, cell_after)
 
@@ -336,18 +336,20 @@ class Spreadsheet(RootMixin):
             repeated = table_cell.get(self.qname("table:number-columns-repeated"))
             if repeated is None:
                 if table_cell.find("*") is None:
-                    table_cell.set(self.qname("table:number-columns-repeated"), str(gap))
+                    # table_cell.set(self.qname("table:number-columns-repeated"), str(gap))
+                    self.set_element_attr(table_cell, "table:number-columns-repeated", gap)
                 else:
-                    self.create_sub_element(row, "table:table-cell", {"table:number-columns-repeated": str(gap)})
+                    self.create_sub_element(row, "table:table-cell", {"table:number-columns-repeated": gap})
             else:
-                table_cell.set(self.qname("table:number-columns-repeated"), str(gap + int(repeated)))
+                # table_cell.set(self.qname("table:number-columns-repeated"), str(gap + int(repeated)))
+                self.set_element_attr(table_cell, "table:number-columns-repeated", gap + int(repeated))
 
-        attrs = {
+        attrs = cast(attrsType, {
             "office:value-type": value_type.value,
             "calcext:value-type": value_type.value,
-        }
+        })
         if value_type == ValueType.float:
-            attrs["office:value"] = str(value)
+            attrs["office:value"] = value
 
         cell = self.create_sub_element(row, "table:table-cell", attrs)
 
