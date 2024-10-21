@@ -5,7 +5,7 @@ from ooolib.document import Calc
 calc = Calc()
 
 sheet = calc.get_sheet()
-# print("Boundary:", sheet.boundary)
+# print("Boundary:", sheet.get_boundary())
 
 sheet.set_cell_value("A1", "one")
 

@@ -23,31 +23,32 @@ class Spreadsheet(RootMixin):
     def __init__(self, sheet: Element) -> None:
         super().__init__()
         self.root = sheet
-        self.boundary: tuple[int, int] = self.calculate_boundary()
 
-    def calculate_boundary(self) -> tuple[int, int]:
-        """Calculate table max rows and columns."""
-        rows, columns = 0, 0
-        count_columns = True
+    def count_rows(self) -> int:
+        """Count table rows."""
+        rows = 0
         for row in self.root.findall('table:table/table:table-row', self.ns):
             repeated = row.get(self.qname("table:number-rows-repeated"))
             if repeated is None:
                 rows += 1
             else:
                 rows += int(repeated)
-            if count_columns:
-                count_columns = False  # count only once
-                for cell in self.find_cells_or_covered(row):
-                    repeated = cell.get(self.qname("table:number-columns-repeated"))
-                    if repeated is None:
-                        spanned = cell.get(self.qname("table:number-columns-spanned"))
-                        if spanned is None:
-                            columns += 1
-                        else:
-                            columns += int(spanned)
-                    else:
-                        columns += int(repeated)
-        return rows, columns
+        return rows
+
+    def count_columns(self) -> int:
+        """Count columns."""
+        columns = 0
+        for column in self.root.findall("table:table/table:table-column", self.ns):
+            repeated = column.get(self.qname("table:number-columns-repeated"))
+            if repeated is None:
+                columns += 1
+            else:
+                columns += int(repeated)
+        return columns
+
+    def get_boundary(self) -> tuple[int, int]:
+        """Calculate table max rows and columns."""
+        return self.count_columns(), self.count_rows()
 
     def resolve_value_type(self, value: valueType) -> ValueType:
         """Resolve value type."""
@@ -202,7 +203,7 @@ class Spreadsheet(RootMixin):
         if value_type == ValueType.float:
             attrs["office:value"] = str(value)
         cell = self.get_or_create_element(row, "table:table-cell", attrs, alternate_name="table:covered-table-cell")
-        if value_type != ValueType.float:
+        if value_type != ValueType.float and self.qname("office:value") in cell.attrib:
             cell.attrib.pop(self.qname("office:value"))
         return cell
 
@@ -217,6 +218,8 @@ class Spreadsheet(RootMixin):
         print("." * 60)
         selected_column, selected_row = self.get_coordinates(position)
 
+        num_columns = self.count_columns()
+        print("num_columns:", num_columns)
         row = self.get_or_create_row(selected_row)
 
         if value_type is None:

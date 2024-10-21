@@ -8,7 +8,7 @@ calc.load("F10.ods")
 
 calc.debug_cells()
 sheet = calc.get_sheet()
-print("Boundary:", sheet.boundary)
+print("Boundary:", sheet.get_boundary())
 
 # sheet.set_cell_value((2, 3), "test")
 
@@ -58,4 +58,4 @@ sheet.set_cell_value("XFC1", "XFC1")
 # calc2 = Calc()
 # calc2.load(name)
 # sheet = calc2.get_sheet()
-# print("Boundary2:", sheet.boundary)
+# print("Boundary2:", sheet.get_boundary())
