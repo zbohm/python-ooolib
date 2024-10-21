@@ -228,13 +228,19 @@ class Spreadsheet(RootMixin):
         #     repeated = int(value)
         print("repeated:", repeated)
         # import pdb; pdb.set_trace()  # !!!
+
+        if not repeated:
+            return table_cell
+
         if before:
-            attrs = cast(attrsType, {}) if before == 1 else {"table:number-columns-repeated": before}
+            attrs = cast(attrsType, {"before": "yes"}) if before == 1 else {"table:number-columns-repeated": before,
+                                                                            "before": "yes"}
             cell_before = self.create_element("table:table-cell", attrs)
             table_row.insert(position, cell_before)
 
         if after:
-            attrs = cast(attrsType, {}) if after == 1 else {"table:number-columns-repeated": after}
+            attrs = cast(attrsType, {"after": "yes"}) if after == 1 else {"table:number-columns-repeated": after,
+                                                                          "after": "yes"}
             cell_after = self.create_element("table:table-cell", attrs)
             table_row.insert(position + 1, cell_after)
 

@@ -13,8 +13,8 @@ calc.load(Path().home().joinpath('tests').joinpath('columns.ods'))
 sheet = calc.get_sheet()
 # sheet.set_cell_value("E1", "echt")
 
-sheet.set_cell_value("A1", "aaa")
-# sheet.set_cell_value("B1", "bbb")
+# sheet.set_cell_value("A1", "aaa")
+sheet.set_cell_value("B1", "bbb")
 # sheet.set_cell_value("C1", "ccc")
 # sheet.set_cell_value("D1", "ddd")
 
