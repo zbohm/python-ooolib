@@ -4,14 +4,14 @@ from ooolib.document import Calc
 
 
 calc = Calc()
-calc.load(Path().home().joinpath('tests').joinpath('empty.ods'))
+# calc.load(Path().home().joinpath('tests').joinpath('empty.ods'))
 # calc.load(Path().home().joinpath('tests').joinpath('calc-cells.ods'))
 # calc.load(Path().home().joinpath('tests').joinpath('calc-covered-cells.ods'))
 # calc.load(Path().home().joinpath('tests').joinpath('c1-3.ods'))
-# calc.load(Path().home().joinpath('tests').joinpath('columns.ods'))
+calc.load(Path().home().joinpath('tests').joinpath('columns.ods'))
 
 sheet = calc.get_sheet()
-sheet.set_cell_value("A2", "A-2")
+sheet.set_cell_value("E1", "echt")
 # sheet.set_cell_value("A2", 2)
 # sheet.set_cell_value("A3", 3)
 # sheet.set_cell_value("A4", 4)

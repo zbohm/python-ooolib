@@ -50,6 +50,13 @@ class Spreadsheet(RootMixin):
         """Calculate table max rows and columns."""
         return self.count_columns(), self.count_rows()
 
+    def set_columns(self, add_columns: int):
+        """Set columns."""
+        column = self.root_find("table:table/table:table-column[last()]")
+        repeated = column.get(self.qname("table:number-columns-repeated"))
+        num = add_columns if repeated is None else int(repeated) + add_columns
+        column.set(self.qname("table:number-columns-repeated"), str(num))
+
     def resolve_value_type(self, value: valueType) -> ValueType:
         """Resolve value type."""
         value_type = ValueType.string
@@ -218,8 +225,13 @@ class Spreadsheet(RootMixin):
         print("." * 60)
         selected_column, selected_row = self.get_coordinates(position)
 
-        num_columns = self.count_columns()
-        print("num_columns:", num_columns)
+        columns = self.count_columns()
+        print("GET:columns:", columns, "selected_column:", selected_column)
+        if selected_column > columns:
+            self.set_columns(selected_column - columns)
+            columns = selected_column
+        print("SET:columns:", columns)
+
         row = self.get_or_create_row(selected_row)
 
         if value_type is None:
